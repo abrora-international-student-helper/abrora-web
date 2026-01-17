@@ -130,7 +130,7 @@ export default function HomePage() {
                     <div className="grid grid-cols-3 overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
                       {/* Column 1: By Journey Stage */}
                       <div className="space-y-1 border-r border-gray-100 pr-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">By Journey Stage</p>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Rookie</p>
                         <DropdownItem
                           icon="🎓"
                           title="Applying to College"
