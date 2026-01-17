@@ -1,8 +1,9 @@
 "use client"
 
-import { useState } from "react"
 import Link from "next/link"
-
+import React, { useState } from 'react';
+// Assuming you are using Lucide icons, but I have provided the SVG paths below for compatibility
+import Navbar from "./components/Nav";
 export default function HomePage() {
   const [vaultOpen, setVaultOpen] = useState(false);
   const [infoOpen, setInfoOpen] = useState(false);
@@ -18,362 +19,8 @@ export default function HomePage() {
         <div className="pointer-events-none absolute -top-10 -left-24 h-[380px] w-[380px] rounded-full bg-secondary-muted/40 blur-3xl" />
         <div className="pointer-events-none absolute top-40 -right-24 h-[420px] w-[420px] rounded-full bg-cyan-200/40 blur-3xl" />
 
-        {/* Top nav */}
-        <header className="relative z-50">
-          <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
-            <Link href="/" className="group inline-flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-secondary text-white shadow-sm">
-                A
-              </span>
-              <span className="text-lg font-bold tracking-tight">
-                ABRORA
-                <span className="ml-2 rounded-full bg-primary-lighter px-2 py-0.5 text-xs font-semibold text-primary-dark ring-1 ring-primary-light">
-                  Beta
-                </span>
-              </span>
-            </Link>
-
-            <nav className="hidden items-center gap-1 md:flex">
-              {/* VAULT DROPDOWN */}
-              <div
-                className="relative"
-                onMouseEnter={() => setVaultOpen(true)}
-                onMouseLeave={() => setVaultOpen(false)}
-              >
-                <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  Vault
-                  <svg className={`h-4 w-4 transition-transform duration-200 ${vaultOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {vaultOpen && (
-                  <div className="absolute left-1/2 top-full w-[520px] -translate-x-1/2 pt-2">
-                    <div className="grid grid-cols-2 overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      {/* Column 1: Documents */}
-                      <div className="space-y-1 border-r border-gray-100 pr-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Documents</p>
-                        <DropdownItem
-                          icon="🛂"
-                          title="Passport & Visa"
-                          desc="Citizenship, visa stamps, I-94"
-                          href="#passport"
-                        />
-                        <DropdownItem
-                          icon="📄"
-                          title="I-20 & SEVIS"
-                          desc="Signed I-20, SEVIS payment"
-                          href="#i20"
-                        />
-                        <DropdownItem
-                          icon="📋"
-                          title="Acceptance Letters"
-                          desc="College admission documents"
-                          href="#acceptance"
-                        />
-                        <DropdownItem
-                          icon="💳"
-                          title="Financial Docs"
-                          desc="Bank statements, drafts, receipts"
-                          href="#financial"
-                        />
-                      </div>
-
-                      {/* Column 2: More Documents */}
-                      <div className="space-y-1 pl-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Other Records</p>
-                        <DropdownItem
-                          icon="🏥"
-                          title="Medical Records"
-                          desc="Vaccinations, TB test, health reports"
-                          href="#medical"
-                        />
-                        <DropdownItem
-                          icon="👮"
-                          title="Police Clearance"
-                          desc="Background check documents"
-                          href="#police"
-                        />
-                        <DropdownItem
-                          icon="✈️"
-                          title="Travel Records"
-                          desc="Flight tickets, boarding passes"
-                          href="#travel"
-                        />
-                        <DropdownItem
-                          icon="📝"
-                          title="DS-160 & Forms"
-                          desc="Visa application confirmations"
-                          href="#forms"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* INFORMATION FOR DROPDOWN */}
-              <div
-                className="relative"
-                onMouseEnter={() => setInfoOpen(true)}
-                onMouseLeave={() => setInfoOpen(false)}
-              >
-                <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  Information For
-                  <svg className={`h-4 w-4 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {infoOpen && (
-                  <div className="absolute left-1/2 top-full w-[720px] -translate-x-1/2 pt-2">
-                    <div className="grid grid-cols-3 overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      {/* Column 1: Rookie (Nepal to USA) */}
-                      <div className="space-y-1 border-r border-gray-100 pr-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Rookie</p>
-                        <DropdownItem
-                          icon="🎓"
-                          title="College Application"
-                          desc="Research, apply, get accepted"
-                          href="#college"
-                        />
-                        <DropdownItem
-                          icon="🛂"
-                          title="Visa Process"
-                          desc="DS-160, SEVIS, interview prep"
-                          href="#visa"
-                        />
-                        <DropdownItem
-                          icon="💉"
-                          title="Medical & Vaccines"
-                          desc="MMR, TB test, health records"
-                          href="#medical"
-                        />
-                        <DropdownItem
-                          icon="🛍️"
-                          title="Shopping & Flights"
-                          desc="What to pack, cheap flights"
-                          href="#shopping"
-                        />
-                      </div>
-
-                      {/* Column 2: Life in USA */}
-                      <div className="space-y-1 border-r border-gray-100 px-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Life in USA</p>
-                        <DropdownItem
-                          icon="💼"
-                          title="Work Rules"
-                          desc="20 hrs on-campus, SSN, CPT/OPT"
-                          href="#work"
-                        />
-                        <DropdownItem
-                          icon="🏦"
-                          title="Banking & Credit"
-                          desc="Accounts, SSN, credit building"
-                          href="#banking"
-                        />
-                        <DropdownItem
-                          icon="🚗"
-                          title="Getting a Car"
-                          desc="License, insurance, buying tips"
-                          href="#car"
-                        />
-                        <DropdownItem
-                          icon="🏥"
-                          title="Healthcare"
-                          desc="Insurance, clinics, emergencies"
-                          href="#healthcare"
-                        />
-                      </div>
-
-                      {/* Column 3: Safety & Career */}
-                      <div className="space-y-1 pl-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Safety & Career</p>
-                        <DropdownItem
-                          icon="🧠"
-                          title="Mental Health"
-                          desc="Dealing with isolation & stress"
-                          href="#mental-health"
-                        />
-                        <DropdownItem
-                          icon="⚠️"
-                          title="Scam Alerts"
-                          desc="Common scams targeting students"
-                          href="#scams"
-                        />
-                        <DropdownItem
-                          icon="💼"
-                          title="Career & Jobs"
-                          desc="Resume, interviews, H1B path"
-                          href="#career"
-                        />
-
-                        {/* Featured Card */}
-                        <div className="mt-3 rounded-xl bg-gradient-to-br from-primary-lighter to-secondary-lighter p-3">
-                          <div className="text-lg">🔥</div>
-                          <h4 className="mt-1 text-sm font-bold text-gray-900">2025 Guide</h4>
-                          <p className="text-[11px] leading-tight text-gray-600">
-                            Complete guide to staying compliant
-                          </p>
-                          <Link href="#" className="mt-2 inline-flex items-center text-xs font-bold text-primary hover:underline">
-                            Read more <span className="ml-1">→</span>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* CHECKLIST DROPDOWN */}
-              <div
-                className="relative"
-                onMouseEnter={() => setChecklistOpen(true)}
-                onMouseLeave={() => setChecklistOpen(false)}
-              >
-                <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  Checklist
-                  <svg className={`h-4 w-4 transition-transform duration-200 ${checklistOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {checklistOpen && (
-                  <div className="absolute left-1/2 top-full w-[420px] -translate-x-1/2 pt-2">
-                    <div className="overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Step-by-Step Guides</p>
-                      <div className="space-y-1">
-                        <DropdownItem
-                          icon="🛫"
-                          title="First Time to USA"
-                          desc="Pre-arrival → First week → First month"
-                          href="#first-time"
-                        />
-                        <DropdownItem
-                          icon="🔄"
-                          title="Going Back & Returning"
-                          desc="Travel signatures, re-entry docs, customs"
-                          href="#travel-back"
-                        />
-                        <DropdownItem
-                          icon="🌍"
-                          title="USA to Other Countries"
-                          desc="Visa requirements, travel tips, re-entry"
-                          href="#international"
-                        />
-                        <DropdownItem
-                          icon="🎓"
-                          title="Graduation & OPT"
-                          desc="Application timeline, EAD card, job search"
-                          href="#graduation"
-                        />
-                      </div>
-
-                      <div className="mt-4 rounded-xl bg-amber-50 p-3 ring-1 ring-amber-100">
-                        <div className="flex items-start gap-2">
-                          <span className="text-lg">💡</span>
-                          <div>
-                            <p className="text-xs font-semibold text-amber-900">Pro tip</p>
-                            <p className="text-xs text-amber-700">Sign up to save progress and get reminders.</p>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* NEWS & UPDATES DROPDOWN */}
-              <div
-                className="relative"
-                onMouseEnter={() => setNewsOpen(true)}
-                onMouseLeave={() => setNewsOpen(false)}
-              >
-                <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  News & Updates
-                  <svg className={`h-4 w-4 transition-transform duration-200 ${newsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-
-                {newsOpen && (
-                  <div className="absolute right-0 top-full w-[480px] pt-2">
-                    <div className="overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      <div className="grid grid-cols-2 gap-5">
-                        {/* Column 1: News Categories */}
-                        <div className="space-y-1">
-                          <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Categories</p>
-                          <DropdownItem
-                            icon="🇺🇸"
-                            title="Immigration News"
-                            desc="Policy changes, USCIS updates"
-                            href="#immigration-news"
-                          />
-                          <DropdownItem
-                            icon="🇳🇵"
-                            title="Nepal Updates"
-                            desc="Embassy news, travel advisories"
-                            href="#nepal-news"
-                          />
-                          <DropdownItem
-                            icon="⚠️"
-                            title="Alerts & Warnings"
-                            desc="Deportation news, safety alerts"
-                            href="#alerts"
-                          />
-                          <DropdownItem
-                            icon="🏆"
-                            title="Student Achievements"
-                            desc="Success stories, community wins"
-                            href="#achievements"
-                          />
-                        </div>
-
-                        {/* Column 2: Featured News */}
-                        <div>
-                          <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Latest</p>
-                          <div className="space-y-3">
-                            <div className="rounded-xl bg-gray-50 p-3 ring-1 ring-gray-100">
-                              <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700">Important</span>
-                              <h4 className="mt-2 text-sm font-semibold text-gray-900">OPT Rule Changes 2025</h4>
-                              <p className="mt-1 text-[11px] text-gray-600">New guidelines for STEM extensions...</p>
-                              <Link href="#" className="mt-2 inline-flex text-xs font-semibold text-primary hover:underline">
-                                Read more →
-                              </Link>
-                            </div>
-                            <div className="rounded-xl bg-gray-50 p-3 ring-1 ring-gray-100">
-                              <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">Update</span>
-                              <h4 className="mt-2 text-sm font-semibold text-gray-900">Visa Interview Tips</h4>
-                              <p className="mt-1 text-[11px] text-gray-600">Latest experiences from students...</p>
-                              <Link href="#" className="mt-2 inline-flex text-xs font-semibold text-primary hover:underline">
-                                Read more →
-                              </Link>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </nav>
-
-            <div className="flex items-center gap-3">
-              <Link
-                href="/login"
-                className="hidden rounded-xl px-4 py-2 text-sm font-semibold text-gray-800 hover:bg-gray-50 md:inline-flex"
-              >
-                Sign In
-              </Link>
-              <Link
-                href="/signup"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
-              >
-                Get Started
-              </Link>
-            </div>
-          </div>
-        </header>
+     
+        <Navbar/>
 
         {/* Hero */}
         <section className="relative">
@@ -700,17 +347,25 @@ export default function HomePage() {
 }
 
 /**
- * Dropdown item component for navigation menus
+ * Dropdown item component for navigation menus (incident.io style with 3D icons)
  */
-function DropdownItem({ icon, title, desc, href = "#" }: { icon: string; title: string; desc: string; href?: string }) {
+function DropdownItem({ title, desc, href = "#", color = "primary" }: { title: string; desc: string; href?: string; color?: "primary" | "secondary" | "orange" }) {
+  const colorClasses = {
+    primary: "bg-gradient-to-br from-primary to-primary-dark shadow-lg shadow-primary/30",
+    secondary: "bg-gradient-to-br from-secondary to-secondary-dark shadow-lg shadow-secondary/30",
+    orange: "bg-gradient-to-br from-orange-400 to-orange-600 shadow-lg shadow-orange-500/30",
+  };
+
   return (
-    <Link href={href} className="group flex gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
-      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-base group-hover:bg-white group-hover:shadow-sm group-hover:ring-1 group-hover:ring-gray-200">
-        {icon}
+    <Link href={href} className="group flex items-start gap-3">
+      <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-xl ${colorClasses[color]} transition-transform group-hover:scale-105`}>
+        <svg className="h-5 w-5 text-white drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20">
+          <path fillRule="evenodd" d="M4 4a2 2 0 012-2h4.586A2 2 0 0112 2.586L15.414 6A2 2 0 0116 7.414V16a2 2 0 01-2 2H6a2 2 0 01-2-2V4z" clipRule="evenodd" />
+        </svg>
       </div>
       <div className="min-w-0">
-        <p className="text-sm font-semibold text-gray-900 group-hover:text-primary">{title}</p>
-        <p className="text-[11px] leading-tight text-gray-500">{desc}</p>
+        <p className="text-sm font-semibold text-gray-900 group-hover:text-primary transition-colors">{title}</p>
+        <p className="text-[13px] text-gray-500">{desc}</p>
       </div>
     </Link>
   )
