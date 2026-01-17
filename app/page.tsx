@@ -4,9 +4,10 @@ import { useState } from "react"
 import Link from "next/link"
 
 export default function HomePage() {
-  const [featuresOpen, setFeaturesOpen] = useState(false);
-  const [resourcesOpen, setResourcesOpen] = useState(false);
+  const [vaultOpen, setVaultOpen] = useState(false);
+  const [infoOpen, setInfoOpen] = useState(false);
   const [checklistOpen, setChecklistOpen] = useState(false);
+  const [newsOpen, setNewsOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -33,93 +34,107 @@ export default function HomePage() {
             </Link>
 
             <nav className="hidden items-center gap-1 md:flex">
-              {/* FEATURES DROPDOWN */}
+              {/* VAULT DROPDOWN */}
               <div
                 className="relative"
-                onMouseEnter={() => setFeaturesOpen(true)}
-                onMouseLeave={() => setFeaturesOpen(false)}
+                onMouseEnter={() => setVaultOpen(true)}
+                onMouseLeave={() => setVaultOpen(false)}
               >
                 <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  Features
-                  <svg className={`h-4 w-4 transition-transform duration-200 ${featuresOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  Vault
+                  <svg className={`h-4 w-4 transition-transform duration-200 ${vaultOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
-                {featuresOpen && (
-                  <div className="absolute left-1/2 top-full w-[580px] -translate-x-1/2 pt-2">
+                {vaultOpen && (
+                  <div className="absolute left-1/2 top-full w-[520px] -translate-x-1/2 pt-2">
                     <div className="grid grid-cols-2 overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      {/* Column 1: Core Features */}
+                      {/* Column 1: Documents */}
                       <div className="space-y-1 border-r border-gray-100 pr-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Core Tools</p>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Documents</p>
                         <DropdownItem
-                          icon="📁"
-                          title="Document Vault"
-                          desc="Store passport, I-20, visa, I-94 securely"
-                          href="#vault"
+                          icon="🛂"
+                          title="Passport & Visa"
+                          desc="Citizenship, visa stamps, I-94"
+                          href="#passport"
+                        />
+                        <DropdownItem
+                          icon="📄"
+                          title="I-20 & SEVIS"
+                          desc="Signed I-20, SEVIS payment"
+                          href="#i20"
                         />
                         <DropdownItem
                           icon="📋"
-                          title="Visa Tracking"
-                          desc="Status, deadlines & compliance reminders"
-                          href="#tracking"
+                          title="Acceptance Letters"
+                          desc="College admission documents"
+                          href="#acceptance"
                         />
                         <DropdownItem
-                          icon="🔔"
-                          title="Smart Reminders"
-                          desc="OPT/CPT deadlines, travel signatures"
-                          href="#reminders"
-                        />
-                        <DropdownItem
-                          icon="📰"
-                          title="Policy Alerts"
-                          desc="Immigration news that affects you"
-                          href="#news"
+                          icon="💳"
+                          title="Financial Docs"
+                          desc="Bank statements, drafts, receipts"
+                          href="#financial"
                         />
                       </div>
 
-                      {/* Column 2: Featured Card */}
-                      <div className="pl-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Why ABRORA</p>
-                        <div className="rounded-xl bg-gradient-to-br from-primary-lighter to-secondary-lighter p-4">
-                          <div className="text-2xl">🛡️</div>
-                          <h4 className="mt-2 text-sm font-bold text-gray-900">Stay Compliant, Stay Calm</h4>
-                          <p className="mt-1 text-xs leading-relaxed text-gray-600">
-                            Never miss a deadline. Keep documents ready. Focus on your studies, not paperwork.
-                          </p>
-                          <Link href="/signup" className="mt-3 inline-flex items-center text-xs font-bold text-primary hover:underline">
-                            Get started free <span className="ml-1">→</span>
-                          </Link>
-                        </div>
+                      {/* Column 2: More Documents */}
+                      <div className="space-y-1 pl-5">
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Other Records</p>
+                        <DropdownItem
+                          icon="🏥"
+                          title="Medical Records"
+                          desc="Vaccinations, TB test, health reports"
+                          href="#medical"
+                        />
+                        <DropdownItem
+                          icon="👮"
+                          title="Police Clearance"
+                          desc="Background check documents"
+                          href="#police"
+                        />
+                        <DropdownItem
+                          icon="✈️"
+                          title="Travel Records"
+                          desc="Flight tickets, boarding passes"
+                          href="#travel"
+                        />
+                        <DropdownItem
+                          icon="📝"
+                          title="DS-160 & Forms"
+                          desc="Visa application confirmations"
+                          href="#forms"
+                        />
                       </div>
                     </div>
                   </div>
                 )}
               </div>
 
-              {/* RESOURCES DROPDOWN */}
+              {/* INFORMATION FOR DROPDOWN */}
               <div
                 className="relative"
-                onMouseEnter={() => setResourcesOpen(true)}
-                onMouseLeave={() => setResourcesOpen(false)}
+                onMouseEnter={() => setInfoOpen(true)}
+                onMouseLeave={() => setInfoOpen(false)}
               >
                 <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  Resources
-                  <svg className={`h-4 w-4 transition-transform duration-200 ${resourcesOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  Information For
+                  <svg className={`h-4 w-4 transition-transform duration-200 ${infoOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
                 </button>
 
-                {resourcesOpen && (
-                  <div className="absolute left-1/2 top-full w-[680px] -translate-x-1/2 pt-2">
+                {infoOpen && (
+                  <div className="absolute left-1/2 top-full w-[720px] -translate-x-1/2 pt-2">
                     <div className="grid grid-cols-3 overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      {/* Column 1: Rookie Guide */}
+                      {/* Column 1: By Journey Stage */}
                       <div className="space-y-1 border-r border-gray-100 pr-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Rookie Guide</p>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">By Journey Stage</p>
                         <DropdownItem
                           icon="🎓"
-                          title="College Application"
-                          desc="Research, apply, get accepted"
+                          title="Applying to College"
+                          desc="Research, applications, acceptance"
                           href="#college"
                         />
                         <DropdownItem
@@ -129,16 +144,16 @@ export default function HomePage() {
                           href="#visa"
                         />
                         <DropdownItem
-                          icon="💉"
-                          title="Medical & Vaccinations"
-                          desc="MMR, TB test, health records"
-                          href="#medical"
+                          icon="✈️"
+                          title="New Arrivals"
+                          desc="First 30 days checklist"
+                          href="#arrivals"
                         />
                         <DropdownItem
-                          icon="✈️"
-                          title="Flights & Shopping"
-                          desc="What to pack, cheap flights"
-                          href="#travel"
+                          icon="💼"
+                          title="OPT / STEM OPT"
+                          desc="Work authorization & deadlines"
+                          href="#opt"
                         />
                       </div>
 
@@ -152,10 +167,10 @@ export default function HomePage() {
                           href="#work"
                         />
                         <DropdownItem
-                          icon="💳"
-                          title="Credit Building"
-                          desc="SSN, first credit card, score"
-                          href="#credit"
+                          icon="🏦"
+                          title="Banking & Credit"
+                          desc="Accounts, SSN, credit building"
+                          href="#banking"
                         />
                         <DropdownItem
                           icon="🚗"
@@ -164,16 +179,16 @@ export default function HomePage() {
                           href="#car"
                         />
                         <DropdownItem
-                          icon="🏦"
-                          title="Banking & Finance"
-                          desc="Open accounts, send money home"
-                          href="#banking"
+                          icon="🏥"
+                          title="Healthcare"
+                          desc="Insurance, clinics, emergencies"
+                          href="#healthcare"
                         />
                       </div>
 
-                      {/* Column 3: Safety & Wellness */}
+                      {/* Column 3: Safety & Career */}
                       <div className="space-y-1 pl-5">
-                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Safety & Wellness</p>
+                        <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Safety & Career</p>
                         <DropdownItem
                           icon="🧠"
                           title="Mental Health"
@@ -192,12 +207,18 @@ export default function HomePage() {
                           desc="Resume, interviews, H1B path"
                           href="#career"
                         />
-                        <DropdownItem
-                          icon="🏥"
-                          title="Healthcare"
-                          desc="Insurance, clinics, emergencies"
-                          href="#healthcare"
-                        />
+
+                        {/* Featured Card */}
+                        <div className="mt-3 rounded-xl bg-gradient-to-br from-primary-lighter to-secondary-lighter p-3">
+                          <div className="text-lg">🔥</div>
+                          <h4 className="mt-1 text-sm font-bold text-gray-900">2025 Guide</h4>
+                          <p className="text-[11px] leading-tight text-gray-600">
+                            Complete guide to staying compliant
+                          </p>
+                          <Link href="#" className="mt-2 inline-flex items-center text-xs font-bold text-primary hover:underline">
+                            Read more <span className="ml-1">→</span>
+                          </Link>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -211,7 +232,7 @@ export default function HomePage() {
                 onMouseLeave={() => setChecklistOpen(false)}
               >
                 <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
-                  Checklists
+                  Checklist
                   <svg className={`h-4 w-4 transition-transform duration-200 ${checklistOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                   </svg>
@@ -225,7 +246,7 @@ export default function HomePage() {
                         <DropdownItem
                           icon="🛫"
                           title="First Time to USA"
-                          desc="Pre-arrival → First week → First month tasks"
+                          desc="Pre-arrival → First week → First month"
                           href="#first-time"
                         />
                         <DropdownItem
@@ -253,7 +274,7 @@ export default function HomePage() {
                           <span className="text-lg">💡</span>
                           <div>
                             <p className="text-xs font-semibold text-amber-900">Pro tip</p>
-                            <p className="text-xs text-amber-700">Sign up to save progress and get reminders for each step.</p>
+                            <p className="text-xs text-amber-700">Sign up to save progress and get reminders.</p>
                           </div>
                         </div>
                       </div>
@@ -262,10 +283,79 @@ export default function HomePage() {
                 )}
               </div>
 
-              {/* NEWS LINK */}
-              <a href="#news" className="rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900">
-                News & Updates
-              </a>
+              {/* NEWS & UPDATES DROPDOWN */}
+              <div
+                className="relative"
+                onMouseEnter={() => setNewsOpen(true)}
+                onMouseLeave={() => setNewsOpen(false)}
+              >
+                <button className="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 hover:text-gray-900 focus:outline-none">
+                  News & Updates
+                  <svg className={`h-4 w-4 transition-transform duration-200 ${newsOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {newsOpen && (
+                  <div className="absolute right-0 top-full w-[480px] pt-2">
+                    <div className="overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
+                      <div className="grid grid-cols-2 gap-5">
+                        {/* Column 1: News Categories */}
+                        <div className="space-y-1">
+                          <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Categories</p>
+                          <DropdownItem
+                            icon="🇺🇸"
+                            title="Immigration News"
+                            desc="Policy changes, USCIS updates"
+                            href="#immigration-news"
+                          />
+                          <DropdownItem
+                            icon="🇳🇵"
+                            title="Nepal Updates"
+                            desc="Embassy news, travel advisories"
+                            href="#nepal-news"
+                          />
+                          <DropdownItem
+                            icon="⚠️"
+                            title="Alerts & Warnings"
+                            desc="Deportation news, safety alerts"
+                            href="#alerts"
+                          />
+                          <DropdownItem
+                            icon="🏆"
+                            title="Student Achievements"
+                            desc="Success stories, community wins"
+                            href="#achievements"
+                          />
+                        </div>
+
+                        {/* Column 2: Featured News */}
+                        <div>
+                          <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Latest</p>
+                          <div className="space-y-3">
+                            <div className="rounded-xl bg-gray-50 p-3 ring-1 ring-gray-100">
+                              <span className="inline-block rounded-full bg-red-100 px-2 py-0.5 text-[10px] font-semibold text-red-700">Important</span>
+                              <h4 className="mt-2 text-sm font-semibold text-gray-900">OPT Rule Changes 2025</h4>
+                              <p className="mt-1 text-[11px] text-gray-600">New guidelines for STEM extensions...</p>
+                              <Link href="#" className="mt-2 inline-flex text-xs font-semibold text-primary hover:underline">
+                                Read more →
+                              </Link>
+                            </div>
+                            <div className="rounded-xl bg-gray-50 p-3 ring-1 ring-gray-100">
+                              <span className="inline-block rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-semibold text-blue-700">Update</span>
+                              <h4 className="mt-2 text-sm font-semibold text-gray-900">Visa Interview Tips</h4>
+                              <p className="mt-1 text-[11px] text-gray-600">Latest experiences from students...</p>
+                              <Link href="#" className="mt-2 inline-flex text-xs font-semibold text-primary hover:underline">
+                                Read more →
+                              </Link>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
             </nav>
 
             <div className="flex items-center gap-3">
@@ -610,16 +700,16 @@ export default function HomePage() {
 }
 
 /**
- * Dropdown item component for the "Information For" menu
+ * Dropdown item component for navigation menus
  */
-function DropdownItem({ icon, title, desc }: { icon: string, title: string, desc: string }) {
+function DropdownItem({ icon, title, desc, href = "#" }: { icon: string; title: string; desc: string; href?: string }) {
   return (
-    <Link href="#" className="group flex gap-3 rounded-lg transition-colors hover:bg-gray-50">
-      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-sm group-hover:bg-white group-hover:shadow-sm">
+    <Link href={href} className="group flex gap-3 rounded-xl p-2 transition-colors hover:bg-gray-50">
+      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-base group-hover:bg-white group-hover:shadow-sm group-hover:ring-1 group-hover:ring-gray-200">
         {icon}
       </div>
-      <div>
-        <p className="text-sm font-bold text-gray-900">{title}</p>
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-gray-900 group-hover:text-primary">{title}</p>
         <p className="text-[11px] leading-tight text-gray-500">{desc}</p>
       </div>
     </Link>
