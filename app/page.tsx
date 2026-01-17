@@ -1,6 +1,11 @@
+"use client"
+
+import { useState } from "react"
 import Link from "next/link"
 
 export default function HomePage() {
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* Background */}
@@ -11,7 +16,7 @@ export default function HomePage() {
         <div className="pointer-events-none absolute top-40 -right-24 h-[420px] w-[420px] rounded-full bg-cyan-200/40 blur-3xl" />
 
         {/* Top nav */}
-        <header className="relative">
+        <header className="relative z-50">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
             <Link href="/" className="group inline-flex items-center gap-2">
               <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-secondary text-white shadow-sm">
@@ -27,16 +32,62 @@ export default function HomePage() {
 
             <nav className="hidden items-center gap-6 md:flex">
               <a href="#features" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                Features
+                Vault
               </a>
-              <a href="#how" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                How it works
-              </a>
+
+              {/* DROPDOWN - Inspiration from incident.io */}
+              <div 
+                className="relative"
+                onMouseEnter={() => setIsDropdownOpen(true)}
+                onMouseLeave={() => setIsDropdownOpen(false)}
+              >
+                <button className="flex items-center gap-1 text-sm font-medium text-gray-700 hover:text-gray-900 focus:outline-none py-2">
+                  Information For
+                  <svg className={`h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute left-1/2 top-full w-[640px] -translate-x-1/2 pt-2">
+                    <div className="grid grid-cols-3 overflow-hidden rounded-3xl bg-white p-6 shadow-2xl ring-1 ring-gray-200">
+                      {/* Column 1: By Persona */}
+                      <div className="col-span-1 space-y-4 border-r border-gray-100 pr-6">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">By Status</p>
+                        <DropdownItem icon="🎓" title="F-1 Students" desc="Academic student compliance." />
+                        <DropdownItem icon="💼" title="OPT / STEM" desc="Work authorization tracking." />
+                        <DropdownItem icon="✈️" title="New Arrivals" desc="First 30 days checklist." />
+                      </div>
+
+                      {/* Column 2: By Category */}
+                      <div className="col-span-1 space-y-4 px-6">
+                        <p className="text-[10px] font-bold uppercase tracking-widest text-gray-400">By Need</p>
+                        <DropdownItem icon="🏦" title="Banking" desc="Opening accounts & SSN." />
+                        <DropdownItem icon="🏥" title="Healthcare" desc="Insurance & clinics guide." />
+                        <DropdownItem icon="📱" title="Lifestyle" desc="Housing & SIM cards." />
+                      </div>
+
+                      {/* Column 3: Featured (The incident.io 'Read More' style) */}
+                      <div className="col-span-1 rounded-2xl bg-gray-50 p-5">
+                        <div className="text-xl">🔥</div>
+                        <h4 className="mt-2 text-sm font-bold text-gray-900">The 2024 Guide</h4>
+                        <p className="mt-1 text-xs leading-relaxed text-gray-600">
+                          Our philosophy on staying legal and stress-free in the U.S.
+                        </p>
+                        <Link href="#" className="mt-4 inline-flex items-center text-xs font-bold text-primary hover:underline">
+                          Read more <span className="ml-1">→</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <a href="#security" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                Security
+                Checklist
               </a>
               <a href="#stories" className="text-sm font-medium text-gray-700 hover:text-gray-900">
-                Stories
+                News & Updates
               </a>
             </nav>
 
@@ -378,5 +429,22 @@ export default function HomePage() {
         </div>
       </section>
     </div>
+  )
+}
+
+/**
+ * Dropdown item component for the "Information For" menu
+ */
+function DropdownItem({ icon, title, desc }: { icon: string, title: string, desc: string }) {
+  return (
+    <Link href="#" className="group flex gap-3 rounded-lg transition-colors hover:bg-gray-50">
+      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-gray-100 text-sm group-hover:bg-white group-hover:shadow-sm">
+        {icon}
+      </div>
+      <div>
+        <p className="text-sm font-bold text-gray-900">{title}</p>
+        <p className="text-[11px] leading-tight text-gray-500">{desc}</p>
+      </div>
+    </Link>
   )
 }
