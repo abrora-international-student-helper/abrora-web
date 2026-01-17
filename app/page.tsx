@@ -128,13 +128,13 @@ export default function HomePage() {
                 {infoOpen && (
                   <div className="absolute left-1/2 top-full w-[720px] -translate-x-1/2 pt-2">
                     <div className="grid grid-cols-3 overflow-hidden rounded-2xl bg-white p-5 shadow-2xl ring-1 ring-gray-200">
-                      {/* Column 1: By Journey Stage */}
+                      {/* Column 1: Rookie (Nepal to USA) */}
                       <div className="space-y-1 border-r border-gray-100 pr-5">
                         <p className="mb-3 text-[10px] font-bold uppercase tracking-widest text-gray-400">Rookie</p>
                         <DropdownItem
                           icon="🎓"
-                          title="Applying to College"
-                          desc="Research, applications, acceptance"
+                          title="College Application"
+                          desc="Research, apply, get accepted"
                           href="#college"
                         />
                         <DropdownItem
@@ -144,16 +144,16 @@ export default function HomePage() {
                           href="#visa"
                         />
                         <DropdownItem
-                          icon="✈️"
-                          title="New Arrivals"
-                          desc="First 30 days checklist"
-                          href="#arrivals"
+                          icon="💉"
+                          title="Medical & Vaccines"
+                          desc="MMR, TB test, health records"
+                          href="#medical"
                         />
                         <DropdownItem
-                          icon="💼"
-                          title="OPT / STEM OPT"
-                          desc="Work authorization & deadlines"
-                          href="#opt"
+                          icon="🛍️"
+                          title="Shopping & Flights"
+                          desc="What to pack, cheap flights"
+                          href="#shopping"
                         />
                       </div>
 
