@@ -6,20 +6,20 @@ export default function HomePage() {
       {/* Background */}
       <div className="relative overflow-hidden">
         {/* soft blobs */}
-        <div className="pointer-events-none absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-blue-200/40 blur-3xl" />
-        <div className="pointer-events-none absolute -top-10 -left-24 h-[380px] w-[380px] rounded-full bg-indigo-200/40 blur-3xl" />
+        <div className="pointer-events-none absolute -top-24 left-1/2 h-[520px] w-[520px] -translate-x-1/2 rounded-full bg-primary-muted/40 blur-3xl" />
+        <div className="pointer-events-none absolute -top-10 -left-24 h-[380px] w-[380px] rounded-full bg-secondary-muted/40 blur-3xl" />
         <div className="pointer-events-none absolute top-40 -right-24 h-[420px] w-[420px] rounded-full bg-cyan-200/40 blur-3xl" />
 
         {/* Top nav */}
         <header className="relative">
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-5">
             <Link href="/" className="group inline-flex items-center gap-2">
-              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-blue-600 to-indigo-600 text-white shadow-sm">
+              <span className="grid h-9 w-9 place-items-center rounded-xl bg-gradient-to-br from-primary to-secondary text-white shadow-sm">
                 A
               </span>
               <span className="text-lg font-bold tracking-tight">
                 ABRORA
-                <span className="ml-2 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
+                <span className="ml-2 rounded-full bg-primary-lighter px-2 py-0.5 text-xs font-semibold text-primary-dark ring-1 ring-primary-light">
                   Beta
                 </span>
               </span>
@@ -49,7 +49,7 @@ export default function HomePage() {
               </Link>
               <Link
                 href="/signup"
-                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+                className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-secondary px-4 py-2 text-sm font-semibold text-white shadow-sm hover:opacity-95"
               >
                 Get Started
               </Link>
@@ -68,7 +68,7 @@ export default function HomePage() {
 
               <h1 className="mt-5 text-4xl font-extrabold tracking-tight md:text-6xl">
                 Stay compliant.
-                <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+                <span className="block bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
                   Stay organized.
                 </span>
                 Stress less.
@@ -82,7 +82,7 @@ export default function HomePage() {
               <div className="mt-7 flex flex-col gap-3 sm:flex-row">
                 <Link
                   href="/signup"
-                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 px-6 py-3 font-semibold text-white shadow-sm hover:opacity-95"
+                  className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-secondary px-6 py-3 font-semibold text-white shadow-sm hover:opacity-95"
                 >
                   Create free account
                 </Link>
@@ -113,14 +113,14 @@ export default function HomePage() {
 
             {/* Hero card */}
             <div className="relative">
-              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-600/20 to-indigo-600/20 blur" />
+              <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary/20 to-secondary/20 blur" />
               <div className="relative rounded-3xl bg-white/80 p-6 shadow-sm ring-1 ring-gray-200 backdrop-blur">
                 <div className="flex items-start justify-between gap-3">
                   <div>
                     <p className="text-sm font-semibold text-gray-900">Today</p>
                     <p className="text-xs text-gray-600">Your next actions, auto-sorted</p>
                   </div>
-                  <span className="rounded-full bg-blue-50 px-3 py-1 text-xs font-semibold text-blue-700 ring-1 ring-blue-100">
+                  <span className="rounded-full bg-primary-lighter px-3 py-1 text-xs font-semibold text-primary-dark ring-1 ring-primary-light">
                     Smart reminders
                   </span>
                 </div>
@@ -160,13 +160,13 @@ export default function HomePage() {
                       <p className="text-sm font-semibold">Onboarding checklist</p>
                       <p className="text-xs text-gray-600">Bank • SIM • Campus ID • Health</p>
                     </div>
-                    <span className="rounded-full bg-indigo-50 px-2.5 py-1 text-xs font-semibold text-indigo-700 ring-1 ring-indigo-100">
+                    <span className="rounded-full bg-secondary-lighter px-2.5 py-1 text-xs font-semibold text-secondary-dark ring-1 ring-secondary-light">
                       In progress
                     </span>
                   </div>
                 </div>
 
-                <div className="mt-6 rounded-2xl bg-gradient-to-r from-blue-600 to-indigo-600 p-4 text-white">
+                <div className="mt-6 rounded-2xl bg-gradient-to-r from-primary to-secondary p-4 text-white">
                   <p className="text-sm font-semibold">Pro tip</p>
                   <p className="text-xs opacity-90">
                     Upload documents once—ABRORA keeps them ready for travel, jobs, and school forms.
@@ -217,7 +217,7 @@ export default function HomePage() {
             },
           ].map((f) => (
             <div key={f.title} className="group relative rounded-3xl bg-white p-6 shadow-sm ring-1 ring-gray-200">
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-blue-50 to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
+              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-lighter to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
               <div className="relative">
                 <div className="flex items-center justify-between">
                   <div className="text-3xl">{f.icon}</div>
@@ -228,7 +228,7 @@ export default function HomePage() {
                 <h3 className="mt-4 text-lg font-bold">{f.title}</h3>
                 <p className="mt-2 text-sm leading-relaxed text-gray-700">{f.desc}</p>
 
-                <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-blue-700">
+                <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-dark">
                   Learn more <span aria-hidden>→</span>
                 </div>
               </div>
@@ -302,7 +302,7 @@ export default function HomePage() {
           </div>
 
           <div className="relative">
-            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-blue-600/15 to-indigo-600/15 blur" />
+            <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-primary/15 to-secondary/15 blur" />
             <div className="relative rounded-3xl bg-white p-6 ring-1 ring-gray-200">
               <p className="text-sm font-semibold text-gray-900">What students say</p>
               <div className="mt-4 rounded-2xl bg-gray-50 p-5 ring-1 ring-gray-100">
@@ -336,7 +336,7 @@ export default function HomePage() {
       {/* Final CTA */}
       <section className="border-t border-gray-200 bg-white">
         <div className="mx-auto max-w-6xl px-4 py-16">
-          <div className="rounded-3xl bg-gradient-to-r from-blue-600 to-indigo-600 p-8 text-white md:p-12">
+          <div className="rounded-3xl bg-gradient-to-r from-primary to-secondary p-8 text-white md:p-12">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
                 <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">Ready to feel organized?</h2>
