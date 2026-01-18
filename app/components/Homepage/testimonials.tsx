@@ -70,11 +70,11 @@ const InfiniteSlider = ({ items, direction = "left" }: { items: any[], direction
 
 export default function TestimonialsPage() {
   return (
-    <section className="relative min-h-screen bg-[#FAFAFA] py-24 overflow-hidden">
+    <section className="relative h-full flex flex-col justify-center bg-[#FAFAFA] py-12 overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-blue-50/50 blur-3xl opacity-50" />
       
-      <div className="px-4 text-center mb-20">
+      <div className="px-4 text-center mb-10 md:mb-14">
         <motion.span 
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
@@ -93,7 +93,7 @@ export default function TestimonialsPage() {
         <InfiniteSlider items={row2} direction="right" />
       </div>
 
-      <div className="mt-20 flex flex-col items-center">
+      <div className="mt-10 md:mt-14 flex flex-col items-center">
         <div className="flex -space-x-3 mb-6">
           {[1, 2, 3, 4, 5].map((i) => (
             <img 

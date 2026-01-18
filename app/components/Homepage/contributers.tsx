@@ -20,11 +20,11 @@ const universities = [
 
 export default function ContributorsPage() {
   return (
-    <section className="min-h-screen bg-white py-24 px-6">
+    <section className="h-full flex flex-col justify-center bg-white py-12 px-6">
       <div className="mx-auto max-w-7xl">
         
         {/* Header Section */}
-        <div className="text-center mb-24">
+        <div className="text-center mb-12 md:mb-16">
           <motion.p 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}

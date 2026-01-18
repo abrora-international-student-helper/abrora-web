@@ -69,6 +69,7 @@ export default function LoginPage() {
                 New to Abrora?{' '}
                 <Link href="/signup" className="text-blue-600 font-semibold hover:underline">
                   Create an account
+                  
                 </Link>
               </p>
             </div>

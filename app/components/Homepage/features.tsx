@@ -1,136 +1,133 @@
-"use client"
+"use client";
 
-import React from 'react';
-import Link from 'next/link';
-import { motion } from 'framer-motion';
-import { Calendar, Shield, ClipboardCheck, ArrowRight, Sparkles } from 'lucide-react';
+import React from "react";
+import { motion } from "framer-motion";
+import { ArrowRight, BarChart3, Layers, Zap, CheckCircle2 } from "lucide-react";
 
-const FeaturesSection = () => {
-  // Container animation logic
-  const containerVariants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { staggerChildren: 0.15 },
-    },
-  };
-
-  // Individual card animation
-  const cardVariants = {
-    hidden: { opacity: 0, y: 30 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.6, ease: [0.215, 0.61, 0.355, 1] },
-    },
-  };
-
-  const features = [
-    {
-      icon: <Calendar className="h-6 w-6" />,
-      title: "Visa Tracking",
-      desc: "Stay ahead of OPT, CPT, and I-20 deadlines with smart reminders that keep you compliant.",
-      tag: "Compliance",
-      color: "blue",
-    },
-    {
-      icon: <Shield className="h-6 w-6" />,
-      title: "Document Vault",
-      desc: "Military-grade encryption for your Passport, I-94, and SSN. Access your essentials instantly.",
-      tag: "Secure",
-      color: "indigo",
-    },
-    {
-      icon: <ClipboardCheck className="h-6 w-6" />,
-      title: "Onboarding Checklist",
-      desc: "A personalized roadmap from arrival to life setup: bank accounts, SIM cards, and health insurance.",
-      tag: "Guided",
-      color: "emerald",
-    },
-  ];
+const FeatureRow = ({ title, description, badge, color, imageSide = "left", children }: any) => {
+  const isLeft = imageSide === "left";
 
   return (
-    <section id="features" className="relative overflow-hidden py-24 px-4 bg-white">
-      {/* Subtle Mesh Gradient Background */}
-      <div className="absolute top-0 left-1/2 -z-10 h-[600px] w-full -translate-x-1/2 opacity-20 blur-[120px] bg-[radial-gradient(circle_at_center,#3b82f6_0%,transparent_70%)]" />
-
-      <div className="mx-auto max-w-6xl">
-        {/* Header Section */}
-        <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            className="max-w-2xl"
-          >
-            <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-xs font-bold uppercase tracking-wider text-blue-600">
-              <Sparkles className="h-3 w-3" />
-              Premium Features
-            </div>
-            <h2 className="text-4xl font-black tracking-tight text-gray-900 md:text-5xl">
-              Everything you need, <br />
-              <span className="text-gray-400 font-medium italic">nothing you don’t.</span>
-            </h2>
-            <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-              ABRORA is built to feel calm, fast, and secure. We’ve automated the complexity so you can focus on your studies.
-            </p>
-          </motion.div>
-
+    <div className={`flex flex-col ${isLeft ? "md:flex-row" : "md:flex-row-reverse"} items-center gap-12 md:gap-24 py-16 md:py-24`}>
+      {/* Visual Content */}
+      <motion.div 
+        initial={{ opacity: 0, x: isLeft ? -50 : 50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full md:w-1/2 flex justify-center"
+      >
+        <div className={`relative w-full max-w-md aspect-square rounded-[2.5rem] ${color} p-8 flex items-center justify-center shadow-2xl shadow-gray-200`}>
+          {children}
+          {/* Subtle floating element for depth */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            animate={{ y: [0, -15, 0] }}
+            transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+            className="absolute -top-4 -right-4 bg-white p-4 rounded-2xl shadow-xl"
           >
-            <Link
-              href="/signup"
-              className="group inline-flex items-center justify-center gap-2 rounded-2xl bg-gray-900 px-8 py-4 text-base font-bold text-white transition-all hover:bg-blue-600 hover:shadow-xl hover:shadow-blue-500/20 active:scale-95"
-            >
-              Start now
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-            </Link>
+             <CheckCircle2 className="w-6 h-6 text-green-500" />
           </motion.div>
         </div>
+      </motion.div>
 
-        {/* Features Grid */}
-        <motion.div 
-          variants={containerVariants}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, margin: "-100px" }}
-          className="mt-20 grid grid-cols-1 gap-8 md:grid-cols-3"
+      {/* Text Content */}
+      <motion.div 
+        initial={{ opacity: 0, x: isLeft ? 50 : -50 }}
+        whileInView={{ opacity: 1, x: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        className="w-full md:w-1/2"
+      >
+        <div className="flex flex-col items-start">
+          <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-gray-400 mb-4 px-3 py-1 border border-gray-200 rounded-full">
+            {badge}
+          </span>
+          <h3 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight leading-tight">
+            {title}
+          </h3>
+          <p className="text-lg text-gray-500 mb-8 leading-relaxed max-w-lg">
+            {description}
+          </p>
+          <button className="group flex items-center gap-2 bg-gray-900 text-white px-6 py-3 rounded-full font-semibold transition-all hover:pr-8 active:scale-95">
+            Learn more
+            <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
+          </button>
+        </div>
+      </motion.div>
+    </div>
+  );
+};
+
+const FeaturesSection = () => {
+  return (
+    <section id="features" className="bg-white py-20 px-6 overflow-hidden h-full flex flex-col justify-center">
+      <div className="max-w-7xl mx-auto">
+        
+        {/* Feature 1 - AI Analytics (Orange/Yellow) */}
+        <FeatureRow
+          badge="AI Analytics"
+          title="See exactly what your students need"
+          description="Real-time insights reveal learning gaps instantly. Our AI models analyze performance data to tell you where to focus your attention next."
+          color="bg-[#FFB443]"
+          imageSide="left"
         >
-          {features.map((f) => (
-            <motion.div
-              key={f.title}
-              variants={cardVariants}
-              whileHover={{ y: -8 }}
-              className="group relative flex flex-col rounded-[2.5rem] bg-white p-8 ring-1 ring-gray-100 transition-all hover:shadow-2xl hover:shadow-blue-500/5 hover:ring-blue-100"
-            >
-              <div className="relative z-10">
-                <div className="flex items-center justify-between">
-                  <div className={`flex h-14 w-14 items-center justify-center rounded-2xl bg-gray-50 text-gray-600 transition-colors group-hover:bg-blue-600 group-hover:text-white`}>
-                    {f.icon}
-                  </div>
-                  <span className="rounded-full bg-gray-50 px-4 py-1 text-[10px] font-black uppercase tracking-widest text-gray-500 ring-1 ring-gray-200 group-hover:bg-blue-50 group-hover:text-blue-600 group-hover:ring-blue-100 transition-colors">
-                    {f.tag}
-                  </span>
-                </div>
-                
-                <h3 className="mt-8 text-2xl font-bold text-gray-900">{f.title}</h3>
-                <p className="mt-4 text-sm leading-relaxed text-gray-600">
-                  {f.desc}
-                </p>
-
-                <div className="mt-8 inline-flex items-center gap-2 text-sm font-bold text-blue-600">
-                  Learn more <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-2" />
-                </div>
+          {/* Mockup Card */}
+          <div className="bg-white/90 backdrop-blur shadow-lg rounded-2xl p-6 w-full max-w-[320px] transform -rotate-3 transition-transform hover:rotate-0">
+            <div className="flex items-center gap-4 mb-4">
+              <div className="w-10 h-10 rounded-lg bg-orange-100 flex items-center justify-center">
+                <BarChart3 className="text-orange-600 w-5 h-5" />
               </div>
+              <div className="space-y-1 flex-1">
+                <div className="h-2 w-24 bg-gray-200 rounded-full" />
+                <div className="h-2 w-16 bg-gray-100 rounded-full" />
+              </div>
+            </div>
+            <div className="space-y-3 mt-4">
+              <div className="h-2 w-full bg-gray-50 rounded-full" />
+              <div className="h-2 w-full bg-gray-50 rounded-full" />
+              <div className="h-2 w-3/4 bg-gray-50 rounded-full" />
+            </div>
+          </div>
+        </FeatureRow>
 
-              {/* Decorative Subtle Corner Glow */}
-              <div className="absolute top-0 right-0 -z-10 h-32 w-32 rounded-bl-full bg-blue-50/50 opacity-0 transition-opacity group-hover:opacity-100" />
-            </motion.div>
-          ))}
-        </motion.div>
+        {/* Feature 2 - Test Creation (Light Blue) */}
+        <FeatureRow
+          badge="Test Creation"
+          title="Generate assessments in seconds, not hours"
+          description="Focus on teaching, not formatting. Our smart engine builds curriculum-aligned tests and quizzes with just a few clicks."
+          color="bg-[#A0D4FF]"
+          imageSide="right"
+        >
+          {/* Mockup Card */}
+          <div className="bg-white/90 backdrop-blur shadow-lg rounded-2xl p-6 w-full max-w-[320px] transform rotate-2 transition-transform hover:rotate-0">
+            <div className="flex items-center gap-2 mb-6">
+               <div className="w-full h-3 bg-gray-900 rounded-full" />
+               <Layers className="text-blue-500 w-5 h-5" />
+            </div>
+            <div className="space-y-4">
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded border-2 border-gray-200" />
+                <div className="h-2 w-full bg-gray-100 rounded-full" />
+              </div>
+              <div className="flex items-center gap-3">
+                <div className="w-4 h-4 rounded border-2 border-gray-200" />
+                <div className="h-2 w-full bg-gray-100 rounded-full" />
+              </div>
+            </div>
+          </div>
+        </FeatureRow>
+
+        {/* Feature 3 - Fast Sync (Violet) */}
+        <FeatureRow
+          badge="Fast Sync"
+          title="Stay synchronized across every device"
+          description="Whether you're on your laptop in the classroom or checking progress on your phone, everything stays in perfect harmony."
+          color="bg-[#E2D1FF]"
+          imageSide="left"
+        >
+          <Zap className="w-24 h-24 text-violet-600" />
+        </FeatureRow>
+
       </div>
     </section>
   );
