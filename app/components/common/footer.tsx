@@ -5,6 +5,9 @@ export default function Footer() {
       {/* - Copyright */}
       {/* - Links (Terms, Privacy, Help) */}
       {/* - Social links */}
+      <div>
+        this is our footer
+      </div>
     </footer>
   )
 }
