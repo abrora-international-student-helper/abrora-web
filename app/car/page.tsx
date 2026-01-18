@@ -1,6 +1,7 @@
 'use client'
 
 import React, { useState } from 'react'
+import { motion } from 'framer-motion'
 import Navbar from "../components/Nav";
 import Footer from "../components/common/footer";
 
@@ -14,79 +15,116 @@ export default function CarGuidePage() {
     { id: "insurance", title: "Insurance", icon: "🛡️", desc: "Getting quotes as a student.", bg: "bg-emerald-50/50" },
   ];
 
+  // Animation Variants
+  const containerVars = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1,
+      transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+    }
+  };
+
+  const itemVars = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6, ease: "easeOut" } }
+  };
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F9F9F7] text-[#2D312E] font-sans">
+    <div className="min-h-screen relative overflow-hidden bg-[#F9F9F7] text-[#2D312E] font-sans selection:bg-blue-100">
       <Navbar />
       
-      {/* Mesh Gradient Background Elements - Matching Wellness UI */}
-      <div className="absolute top-[-5%] left-[-10%] w-[60%] h-[40%] bg-[#E8F0EE] rounded-full blur-[120px] opacity-70" />
-      <div className="absolute bottom-[5%] right-[-5%] w-[45%] h-[50%] bg-[#E3E9F2] rounded-full blur-[100px] opacity-60" />
+      {/* Animated Mesh Gradient Background Elements */}
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.1, 1],
+          opacity: [0.5, 0.7, 0.5] 
+        }}
+        transition={{ duration: 10, repeat: Infinity, ease: "linear" }}
+        className="absolute top-[-5%] left-[-10%] w-[60%] h-[40%] bg-[#E8F0EE] rounded-full blur-[120px] pointer-events-none" 
+      />
+      <motion.div 
+        animate={{ 
+          scale: [1, 1.2, 1],
+          opacity: [0.4, 0.6, 0.4] 
+        }}
+        transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
+        className="absolute bottom-[5%] right-[-5%] w-[45%] h-[50%] bg-[#E3E9F2] rounded-full blur-[100px] pointer-events-none" 
+      />
 
-      <div className="max-w-7xl mx-auto relative z-10 py-12 px-6 lg:px-24">
+      <motion.div 
+        initial="hidden"
+        animate="visible"
+        variants={containerVars}
+        className="max-w-7xl mx-auto relative z-10 py-12 px-6 lg:px-24"
+      >
         
         {/* Hero Section */}
         <header className="mb-12 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 border border-blue-200 text-blue-800 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
+          <motion.div variants={itemVars} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-100/50 border border-blue-200 text-blue-800 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
             <span className="relative flex h-2 w-2">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
             </span>
             Freedom on wheels
-          </div>
-          <h1 className="text-5xl md:text-6xl font-light tracking-tight mb-4 leading-tight text-gray-900">
+          </motion.div>
+          <motion.h1 variants={itemVars} className="text-5xl md:text-6xl font-light tracking-tight mb-4 leading-tight text-gray-900">
             Car buying designed for <br />
             <span className="font-semibold text-blue-900 italic text-4xl md:text-6xl">your global journey.</span>
-          </h1>
-          <p className="text-lg text-gray-500 max-w-2xl leading-relaxed">
+          </motion.h1>
+          <motion.p variants={itemVars} className="text-lg text-gray-500 max-w-2xl leading-relaxed">
             Navigating the US car market is a complex milestone. From your first permit to signing the title, Abrora is your co-pilot.
-          </p>
+          </motion.p>
         </header>
 
-        {/* 1. Quick Action Banner - Matching Wellness Crisis Style */}
-        <div className="mb-12 p-8 bg-blue-50/40 border border-blue-100 rounded-[2.5rem] backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
+        {/* Step-by-Step Guides Grid */}
+        <motion.section variants={itemVars} className="mb-12 bg-white/40 backdrop-blur-xl border border-white/80 rounded-[2.5rem] p-8 shadow-[0_8px_30px_rgb(0,0,0,0.04)] ring-1 ring-black/5">
+          <h3 className="text-2xl font-semibold mb-8 flex items-center gap-2">
+            ⚡ Step-by-Step Guides
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+            {categories.map((cat) => (
+                <motion.button 
+                    whileHover={{ y: -5, scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    key={cat.id}
+                    onClick={() => setActiveStep(cat.id)}
+                    className={`p-8 ${cat.bg} rounded-[2rem] text-left transition-all duration-300 group border border-transparent hover:border-white hover:shadow-xl flex flex-col justify-between h-[240px]`}
+                >
+                    <div className="bg-white/60 w-14 h-14 rounded-2xl flex items-center justify-center text-3xl shadow-sm group-hover:bg-white transition-colors group-hover:rotate-12 duration-300">
+                      {cat.icon}
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900 text-lg tracking-tight">{cat.title}</p>
+                      <p className="text-xs text-gray-500 mt-2 leading-relaxed opacity-80 group-hover:opacity-100">{cat.desc}</p>
+                    </div>
+                </motion.button>
+            ))}
+          </div>
+        </motion.section>
+
+        {/* Action Banner */}
+        <motion.div variants={itemVars} className="mb-12 p-8 bg-blue-50/40 border border-blue-100 rounded-[2.5rem] backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
           <div>
             <h2 className="text-xl font-bold text-blue-800 flex items-center gap-2 mb-2">
               🚗 Need a car immediately?
             </h2>
             <p className="text-blue-700/70 text-sm max-w-md italic">Compare rental options vs. buying costs before making a commitment.</p>
           </div>
-          <div className="flex flex-wrap gap-3">
-            <button className="bg-blue-600 text-white px-8 py-3.5 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200/50">
-              Buy vs Rent Guide
-            </button>
-          </div>
-        </div>
+          <button className="bg-blue-600 text-white px-8 py-3.5 rounded-full font-bold hover:bg-blue-700 transition-all shadow-lg shadow-blue-200/50 hover:scale-105 active:scale-95">
+            Buy vs Rent Guide
+          </button>
+        </motion.div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Main Content Area */}
           <div className="lg:col-span-2 space-y-8">
-            
-            {/* 3. Category Grid - Matching Fast Relief Tools Style */}
-            <section className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-[2.5rem] p-8 shadow-sm">
-              <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-                ⚡ Step-by-Step Guides
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {categories.map((cat) => (
-                    <button 
-                        key={cat.id}
-                        onClick={() => setActiveStep(cat.id)}
-                        className={`p-6 ${cat.bg} rounded-2xl text-left hover:scale-[1.02] transition-all group border border-transparent hover:border-white`}
-                    >
-                        <span className="block text-3xl mb-3">{cat.icon}</span>
-                        <p className="font-bold text-gray-800">{cat.title}</p>
-                        <p className="text-xs text-gray-500 mt-1">{cat.desc}</p>
-                    </button>
-                ))}
-              </div>
-            </section>
-
-            {/* 2. Normalizing Section - Matching Emerald Box Style */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-[#1e293b] text-white rounded-[2.5rem] p-8 shadow-xl">
-                <h3 className="text-xl font-bold mb-6 tracking-tight">The Legal Essentials</h3>
-                <ul className="space-y-4 text-slate-100/80 text-sm">
+            <motion.section variants={itemVars} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Dark Box */}
+              <div className="bg-[#1e293b] text-white rounded-[2.5rem] p-8 shadow-xl relative overflow-hidden group">
+                <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
+                    <span className="text-6xl">⚖️</span>
+                </div>
+                <h3 className="text-xl font-bold mb-6 tracking-tight relative z-10 text-white">The Legal Essentials</h3>
+                <ul className="space-y-4 text-slate-100/80 text-sm relative z-10">
                   <li className="flex items-start gap-3">
                     <span className="text-blue-400">●</span>
                     <p><strong>The SSA Letter:</strong> Ineligibility letters are required for the DMV if you lack an SSN.</p>
@@ -95,15 +133,11 @@ export default function CarGuidePage() {
                     <span className="text-blue-400">●</span>
                     <p><strong>Title Transfer:</strong> Never pay cash until the physical title is in your hand.</p>
                   </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-blue-400">●</span>
-                    <p><strong>Registration:</strong> You have 7-30 days to register your car at the DMV after purchase.</p>
-                  </li>
                 </ul>
               </div>
 
-              {/* 5. Budget Box - Matching Academic Pressure Style */}
-              <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm flex flex-col justify-between">
+              {/* Budget Box */}
+              <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm flex flex-col justify-between hover:shadow-md transition-shadow">
                 <div>
                   <h3 className="text-xl font-bold mb-2 text-gray-800">Budgeting 101</h3>
                   <p className="text-sm text-gray-500 mb-6 leading-relaxed">The purchase price is only 60% of the true cost.</p>
@@ -118,39 +152,38 @@ export default function CarGuidePage() {
                   </button>
                 </div>
               </div>
-            </section>
+            </motion.section>
 
-            {/* 7. Seeking Professional Help - Matching Demystifying Counseling Style */}
-            <section className="bg-[#E7EBE8] rounded-[3rem] p-10 flex flex-col md:flex-row gap-10 items-center border border-white/50">
+            {/* Professional Help */}
+            <motion.section variants={itemVars} className="bg-[#E7EBE8] rounded-[3rem] p-10 flex flex-col md:flex-row gap-10 items-center border border-white/50 hover:shadow-lg transition-all">
               <div className="flex-1">
                 <h3 className="text-2xl font-bold mb-4 text-gray-900">Pre-Purchase Inspections</h3>
                 <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">
-                  "A mechanic is your best friend during a sale." Never buy a used car without a <strong>Professional Inspection (PPI).</strong> It usually costs $100 but can save you thousands.
+                  &quot;A mechanic is your best friend during a sale.&quot; Never buy a used car without a professional inspection.
                 </p>
                 <div className="flex flex-wrap gap-4">
                   <button className="text-blue-900 font-bold border-b-2 border-blue-900 pb-1 hover:text-blue-700 transition-all text-sm">
                     How to find a mechanic
                   </button>
-                  <button className="text-gray-500 font-bold border-b-2 border-gray-300 pb-1 hover:text-gray-700 transition-all text-sm">
-                    Inspection Checklist
-                  </button>
                 </div>
               </div>
-              <div className="hidden md:flex w-40 h-40 bg-white/40 backdrop-blur-md rounded-full items-center justify-center text-5xl shadow-inner">
+              <motion.div 
+                animate={{ rotate: [0, 5, 0] }}
+                transition={{ duration: 4, repeat: Infinity }}
+                className="hidden md:flex w-40 h-40 bg-white/40 backdrop-blur-md rounded-full items-center justify-center text-5xl shadow-inner"
+              >
                 🔧
-              </div>
-            </section>
+              </motion.div>
+            </motion.section>
           </div>
 
-          {/* Sidebar Area */}
-          <div className="space-y-8">
-            
-            {/* 8. Checklist - Matching Mood Check-in Style */}
+          {/* Sidebar */}
+          <motion.aside variants={itemVars} className="space-y-8">
             <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-xl shadow-gray-200/50">
               <h3 className="text-lg font-bold mb-6 text-center text-gray-800">Ready to Buy?</h3>
               <div className="space-y-4">
                 {["Check IDP validity", "Compare 3 quotes", "Verify VIN history"].map((item) => (
-                  <div key={item} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl">
+                  <div key={item} className="flex items-center gap-3 p-3 bg-gray-50 rounded-xl hover:bg-blue-50/30 transition-colors">
                     <input type="checkbox" className="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
                     <span className="text-sm text-gray-700 font-medium">{item}</span>
                   </div>
@@ -158,43 +191,18 @@ export default function CarGuidePage() {
               </div>
             </div>
 
-            {/* 4. Daily Maintenance - Matching Daily Wellness Habits Style */}
-            <div className="bg-[#F4F4F9] rounded-[3rem] p-8 border border-white shadow-sm">
-              <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2 px-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                Ownership Habits
-              </h3>
-              <ul className="space-y-4">
-                <li className="group flex gap-4 items-center bg-white p-4 rounded-[1.5rem] shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <span className="text-2xl transform group-hover:rotate-12 transition-transform">🛢️</span>
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">Oil Changes</p>
-                    <p className="text-[10px] text-gray-400 font-medium tracking-tight">Every 5,000 miles.</p>
-                  </div>
-                </li>
-                <li className="group flex gap-4 items-center bg-white p-4 rounded-[1.5rem] shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <span className="text-2xl transform group-hover:rotate-12 transition-transform">🛞</span>
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">Tire Pressure</p>
-                    <p className="text-[10px] text-gray-400 font-medium tracking-tight">Check monthly for safety.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            {/* Document Vault Teaser - Matching Quiz Style */}
             <div className="p-8 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-[2.5rem] border border-blue-100/50">
               <h4 className="text-sm font-bold text-blue-900 mb-2 uppercase tracking-tighter">Document Vault</h4>
-              <p className="text-xs text-blue-700/70 mb-4 leading-relaxed">Store your Title, Insurance, and Registration safely in one place.</p>
+              <p className="text-xs text-blue-700/70 mb-4 leading-relaxed text-indigo-900">Store your Title and Registration safely.</p>
               <button className="w-full py-3 bg-blue-900 text-white rounded-xl text-xs font-bold hover:bg-black transition-all">
                 Go to Vault
               </button>
             </div>
-          </div>
+          </motion.aside>
         </div>
 
         <footer className="mt-24 text-center border-t border-gray-200/40 pt-12">
-          <p className="text-gray-400 text-sm mb-6 italic font-medium">Safe travels start with smart choices.</p>
+          <p className="text-gray-400 text-sm mb-6 italic font-medium tracking-tight">Safe travels start with smart choices.</p>
           <button 
             onClick={() => window.location.href = '/dashboard'}
             className="text-xs font-bold tracking-[0.3em] text-gray-400 hover:text-blue-900 transition-all uppercase px-4 py-2"
@@ -202,17 +210,8 @@ export default function CarGuidePage() {
             ← Return to Dashboard
           </button>
         </footer>
-      </div>
+      </motion.div>
       <Footer />
     </div>
   )
-}
-
-function GuideDetail({ title, desc }: { title: string, desc: string }) {
-    return (
-      <div className="group">
-        <h5 className="text-lg font-bold group-hover:text-blue-600 transition">{title}</h5>
-        <p className="mt-2 text-gray-500 leading-relaxed">{desc}</p>
-      </div>
-    );
 }
