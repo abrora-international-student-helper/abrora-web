@@ -6,6 +6,7 @@ import HowItWorksPage from "./components/Homepage/How-it-works";
 import TestimonialsPage from "./components/Homepage/testimonials";
 import ContributorsPage from "./components/Homepage/contributers";
 import Footer from "./components/common/footer";
+import FeaturesSection from "./components/Homepage/features";
 
 // Assuming you are using Lucide icons, but I have provided the SVG paths below for compatibility
 import Navbar from "./components/Nav";
@@ -162,72 +163,8 @@ export default function HomePage() {
       </div>
 
       {/* Features */}
-      <section id="features" className="mx-auto max-w-6xl px-4 py-16">
-        <div className="flex flex-col items-start justify-between gap-6 md:flex-row md:items-end">
-          <div>
-            <h2 className="text-3xl font-extrabold tracking-tight md:text-4xl">
-              Everything you need, nothing you don’t.
-            </h2>
-            <p className="mt-2 max-w-2xl text-gray-700">
-              ABRORA is designed to feel calm and fast—like a premium product,
-              not a complicated portal.
-            </p>
-          </div>
-          <Link
-            href="/signup"
-            className="inline-flex items-center justify-center rounded-xl bg-gray-900 px-5 py-3 text-sm font-semibold text-white hover:bg-black"
-          >
-            Start now
-          </Link>
-        </div>
-
-        <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
-          {[
-            {
-              icon: "📋",
-              title: "Visa Tracking",
-              desc: "Deadlines, status, and reminders—so you don’t miss the important stuff.",
-              tag: "Compliance",
-            },
-            {
-              icon: "📁",
-              title: "Document Vault",
-              desc: "Keep passport, I-20, I-94, SSN letters, and receipts neatly organized.",
-              tag: "Secure",
-            },
-            {
-              icon: "✅",
-              title: "Onboarding Checklist",
-              desc: "Step-by-step setup from arrival to stable life: banking, phone, campus, health.",
-              tag: "Guided",
-            },
-          ].map((f) => (
-            <div
-              key={f.title}
-              className="group relative rounded-3xl bg-white p-6 shadow-sm ring-1 ring-gray-200"
-            >
-              <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-primary-lighter to-transparent opacity-0 transition-opacity group-hover:opacity-100" />
-              <div className="relative">
-                <div className="flex items-center justify-between">
-                  <div className="text-3xl">{f.icon}</div>
-                  <span className="rounded-full bg-gray-50 px-3 py-1 text-xs font-semibold text-gray-700 ring-1 ring-gray-200">
-                    {f.tag}
-                  </span>
-                </div>
-                <h3 className="mt-4 text-lg font-bold">{f.title}</h3>
-                <p className="mt-2 text-sm leading-relaxed text-gray-700">
-                  {f.desc}
-                </p>
-
-                <div className="mt-5 inline-flex items-center gap-2 text-sm font-semibold text-primary-dark">
-                  Learn more <span aria-hidden>→</span>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
-
+    
+<FeaturesSection/>
       {/* How it works */}
 
       {/* <HowItWorksPage /> */}

@@ -45,7 +45,7 @@ export default function LoginPage() {
           <div className="relative h-full w-full rounded-[2rem] overflow-hidden">
             <img 
               src="https://images.unsplash.com/photo-1745293661108-7704cd73ef32?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D" 
-              alt="YoursTruely"
+              alt="Abrora"
               className="object-cover w-full h-full"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-black/60" />
@@ -55,7 +55,7 @@ export default function LoginPage() {
               <div className="w-8 h-8 bg-white/20 backdrop-blur-md rounded-lg flex items-center justify-center">
                 <div className="w-3 h-3 bg-white rounded-full" />
               </div>
-              YoursTruely
+              Abrora
             </div>
           </div>
         </div>
@@ -66,7 +66,7 @@ export default function LoginPage() {
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Sign in</h1>
               <p className="text-sm text-gray-500">
-                New to YoursTruely?{' '}
+                New to Abrora?{' '}
                 <Link href="/signup" className="text-blue-600 font-semibold hover:underline">
                   Create an account
                 </Link>
