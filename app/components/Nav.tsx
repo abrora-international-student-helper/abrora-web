@@ -96,7 +96,7 @@ const Navbar = () => {
                           <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Life in USA</p>
                           <div className="mt-5 space-y-5">
                             <DropdownItem icon={<Briefcase className="h-5 w-5" />} title="Work Rules" desc="20 hrs, SSN, CPT/OPT" color="orange" />
-                            <DropdownItem icon={<CreditCard className="h-5 w-5" />} title="Banking & Credit" desc="Accounts, credit building" color="green" />
+                            <DropdownItem icon={<CreditCard className="h-5 w-5" />} title="Banking & Credit" desc="Accounts, credit building" color="green" href='credit-card'/>
                             <DropdownItem icon={<HeartPulse className="h-5 w-5" />} title="Healthcare" desc="Insurance, clinics" color="rose" />
                             <DropdownItem icon={<Car className="h-5 w-5" />} title="Getting a Car" desc="License, insurance, tips" color="blue"  href='/car'/>
                           </div>
