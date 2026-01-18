@@ -70,7 +70,7 @@ const InfiniteSlider = ({ items, direction = "left" }: { items: any[], direction
 
 export default function TestimonialsPage() {
   return (
-    <section className="relative h-full flex flex-col justify-center bg-[#FAFAFA] py-12 overflow-hidden">
+    <section className="relative min-h-full flex flex-col justify-center bg-[#FAFAFA] py-20 overflow-hidden">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 -z-10 h-[500px] w-[500px] rounded-full bg-blue-50/50 blur-3xl opacity-50" />
       
@@ -94,7 +94,7 @@ export default function TestimonialsPage() {
       </div>
 
       <div className="mt-10 md:mt-14 flex flex-col items-center">
-        <div className="flex -space-x-3 mb-6">
+        {/* <div className="flex -space-x-3 mb-6">
           {[1, 2, 3, 4, 5].map((i) => (
             <img 
               key={i}
@@ -106,11 +106,11 @@ export default function TestimonialsPage() {
           <div className="flex h-12 w-12 items-center justify-center rounded-full border-4 border-white bg-blue-600 text-xs font-bold text-white">
             +500
           </div>
-        </div>
-        <button className="group flex items-center gap-3 rounded-full bg-gray-900 px-8 py-4 font-bold text-white transition-all hover:bg-blue-600 hover:scale-105 active:scale-95 shadow-xl shadow-gray-200">
+        </div> */}
+        {/* <button className="group flex items-center gap-3 rounded-full bg-gray-900 px-8 py-4 font-bold text-white transition-all hover:bg-blue-600 hover:scale-105 active:scale-95 shadow-xl shadow-gray-200">
           Become part of Abrora
           <Star className="h-4 w-4 group-hover:rotate-12 transition-transform" />
-        </button>
+        </button> */}
       </div>
     </section>
   );

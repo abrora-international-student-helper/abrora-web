@@ -86,7 +86,7 @@ const FeatureRow = ({
 
 const FeaturesSection = () => {
   return (
-    <section id="features" className="bg-gradient-to-b from-white to-gray-50 px-6 overflow-y-auto h-full flex flex-col justify-start py-8">
+    <section id="features" className="bg-gradient-to-b from-white to-gray-50 px-6 py-16">
       <div className="max-w-6xl mx-auto">
         {/* Section Header */}
         <motion.div

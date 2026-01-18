@@ -11,7 +11,7 @@ const universities = Array(8).fill({
 
 export default function ContributorsPage() {
   return (
-    <section className="bg-white py-12 px-6 overflow-hidden h-full flex flex-col justify-center">
+    <section className="bg-white py-20 px-6 overflow-hidden min-h-full flex flex-col justify-center">
       <div className="max-w-7xl mx-auto">
         
         {/* Header Section */}

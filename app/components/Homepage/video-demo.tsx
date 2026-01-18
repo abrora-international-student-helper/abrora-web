@@ -27,7 +27,7 @@ const VideoDemoSection = () => {
   ];
 
   return (
-    <section className="relative overflow-hidden h-full flex flex-col justify-center py-8 px-4 bg-gradient-to-b from-white to-gray-50">
+    <section className="relative overflow-hidden min-h-full flex flex-col justify-center py-16 px-4 bg-gradient-to-b from-white to-gray-50">
       {/* Background decoration */}
       <div className="pointer-events-none absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[800px] w-[800px] rounded-full bg-primary-muted/20 blur-3xl" />
 
