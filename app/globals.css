@@ -65,6 +65,9 @@ body {
 
 .snap-start {
   scroll-snap-align: start;
+}
+
+.snap-always {
   scroll-snap-stop: always;
 }
 
@@ -77,4 +80,10 @@ body {
 .snap-y {
   scrollbar-width: none;
   -ms-overflow-style: none;
+}
+
+/* Ensure sections take full viewport */
+.h-screen {
+  height: 100vh;
+  height: 100dvh; /* Dynamic viewport height for mobile */
 }
