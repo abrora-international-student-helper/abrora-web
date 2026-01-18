@@ -98,7 +98,7 @@ const Navbar = () => {
                             <DropdownItem icon={<Briefcase className="h-5 w-5" />} title="Work Rules" desc="20 hrs, SSN, CPT/OPT" color="orange" />
                             <DropdownItem icon={<CreditCard className="h-5 w-5" />} title="Banking & Credit" desc="Accounts, credit building" color="green" />
                             <DropdownItem icon={<HeartPulse className="h-5 w-5" />} title="Healthcare" desc="Insurance, clinics" color="rose" />
-                            <DropdownItem icon={<Car className="h-5 w-5" />} title="Getting a Car" desc="License, insurance, tips" color="blue" />
+                            <DropdownItem icon={<Car className="h-5 w-5" />} title="Getting a Car" desc="License, insurance, tips" color="blue"  href='/car'/>
                           </div>
                         </div>
                         <div>
@@ -194,11 +194,12 @@ const Navbar = () => {
 interface DropdownItemProps {
   icon: React.ReactNode;
   title: string;
+  href?: string; 
   desc: string;
   color?: 'blue' | 'orange' | 'purple' | 'green' | 'rose' | 'indigo';
 }
 
-const DropdownItem = ({ icon, title, desc, color = 'blue' }: DropdownItemProps) => {
+const DropdownItem = ({ icon, title, desc, color = 'blue' ,href='#' }: DropdownItemProps) => {
   const colorStyles = {
     blue: 'bg-blue-50 text-blue-600 group-hover:bg-blue-100',
     orange: 'bg-orange-50 text-orange-600 group-hover:bg-orange-100',
@@ -209,7 +210,7 @@ const DropdownItem = ({ icon, title, desc, color = 'blue' }: DropdownItemProps) 
   };
 
   return (
-    <Link href="#" className="group flex items-start gap-3.5">
+    <Link href={href} className="group flex items-start gap-3.5">
       <div className={`flex h-11 w-11 shrink-0 items-center justify-center rounded-xl transition-colors ${colorStyles[color]}`}>
         {icon}
       </div>
