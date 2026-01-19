@@ -1,21 +1,33 @@
 // Checklist Types - matching Supabase database schema
 
-export type Priority = 'low' | 'medium' | 'high' | 'critical'
-export type ChecklistStatus = 'active' | 'completed' | 'archived'
-export type TemplateCategory = 'pre-arrival' | 'first-week' | 'first-month' | 'documents' | 'housing' | 'finance' | 'academics' | 'custom'
+// Enum types matching database
+export type PriorityLevel = 'low' | 'medium' | 'high' | 'critical'
+export type ChecklistCategory = 'pre_arrival' | 'first_week' | 'first_month' | 'ongoing' | 'opt' | 'cpt' | 'travel' | 'graduation' | 'custom'
+export type ChecklistStatus = 'not_started' | 'in_progress' | 'completed' | 'archived'
+export type TemplateDifficulty = 'easy' | 'medium' | 'complex'
 export type ChecklistColor = 'blue' | 'green' | 'purple' | 'orange' | 'red' | 'yellow' | 'pink' | 'teal'
 
 // Database schema types
 export interface ChecklistItem {
   id: string
-  checklist_id: string
+  user_id: string
+  checklist_id: string | null
+  category: ChecklistCategory
   title: string
-  description?: string | null
-  priority: Priority
-  due_date?: string | null
-  completed: boolean
-  completed_at?: string | null
+  description: string | null
+  is_completed: boolean
+  completed_at: string | null
+  help_url: string | null
+  help_text: string | null
   sort_order: number
+  is_custom: boolean
+  priority: PriorityLevel
+  due_date: string | null
+  parent_id: string | null
+  source_template_item_id: string | null
+  tags: string[] | null
+  notes: string | null
+  attachments: string[] | null
   created_at: string
   updated_at: string
 }
@@ -24,12 +36,15 @@ export interface UserChecklist {
   id: string
   user_id: string
   title: string
-  description?: string | null
-  category: TemplateCategory
-  color: ChecklistColor
-  icon?: string | null
+  description: string | null
+  category: ChecklistCategory
+  icon: string
+  color: string
   status: ChecklistStatus
-  template_id?: string | null
+  source_template_id: string | null
+  is_pinned: boolean
+  due_date: string | null
+  completed_at: string | null
   sort_order: number
   created_at: string
   updated_at: string
@@ -38,17 +53,26 @@ export interface UserChecklist {
 
 export interface ChecklistTemplate {
   id: string
+  slug: string
   title: string
-  description?: string | null
-  category: TemplateCategory
-  color: ChecklistColor
-  icon?: string | null
-  difficulty: 'easy' | 'medium' | 'hard'
-  estimated_time?: string | null
-  usage_count: number
-  rating: number
+  description: string | null
+  category: ChecklistCategory
+  icon: string
+  color: string
+  difficulty: TemplateDifficulty
+  estimated_time: string | null
+  is_official: boolean
+  is_active: boolean
   is_featured: boolean
+  created_by: string | null
+  usage_count: number
+  rating_sum: number
+  rating_count: number
+  affected_visa_types: string[] | null
+  tags: string[] | null
+  sort_order: number
   created_at: string
+  updated_at: string
   items: TemplateItem[]
 }
 
@@ -56,51 +80,64 @@ export interface TemplateItem {
   id: string
   template_id: string
   title: string
-  description?: string | null
-  priority: Priority
+  description: string | null
+  help_url: string | null
+  help_text: string | null
+  is_required: boolean
+  estimated_minutes: number | null
   sort_order: number
+  parent_id: string | null
+  tags: string[] | null
+  created_at: string
 }
 
 // Input types for creating/updating
 export interface CreateChecklistInput {
   title: string
   description?: string
-  category: TemplateCategory
-  color: ChecklistColor
+  category: ChecklistCategory
+  color?: string
   icon?: string
 }
 
 export interface UpdateChecklistInput {
   title?: string
   description?: string
-  category?: TemplateCategory
-  color?: ChecklistColor
+  category?: ChecklistCategory
+  color?: string
   icon?: string
   status?: ChecklistStatus
+  is_pinned?: boolean
+  due_date?: string | null
 }
 
 export interface CreateItemInput {
   checklist_id: string
+  category: ChecklistCategory
   title: string
   description?: string
-  priority: Priority
+  priority?: PriorityLevel
   due_date?: string
+  help_url?: string
+  help_text?: string
+  parent_id?: string
 }
 
 export interface UpdateItemInput {
   title?: string
   description?: string
-  priority?: Priority
+  priority?: PriorityLevel
   due_date?: string | null
-  completed?: boolean
+  is_completed?: boolean
+  notes?: string
 }
 
 // Filter types
 export interface ChecklistFilter {
-  status: 'all' | 'active' | 'completed'
-  priority: Priority | 'all'
+  status: 'all' | ChecklistStatus
+  priority: PriorityLevel | 'all'
   search: string
-  category: TemplateCategory | 'all'
+  category: ChecklistCategory | 'all'
 }
 
 // Progress types
@@ -110,8 +147,41 @@ export interface ChecklistProgress {
   percentage: number
 }
 
+// Nested item type for UI rendering
+export interface NestedChecklistItem extends ChecklistItem {
+  subItems: ChecklistItem[]
+}
+
+// Helper function to organize flat items into nested structure
+export function organizeItemsHierarchy(items: ChecklistItem[]): NestedChecklistItem[] {
+  const itemMap = new Map<string, NestedChecklistItem>()
+  const rootItems: NestedChecklistItem[] = []
+
+  // First pass: create map with empty subItems arrays
+  items.forEach(item => {
+    itemMap.set(item.id, { ...item, subItems: [] })
+  })
+
+  // Second pass: organize into hierarchy
+  items.forEach(item => {
+    const nestedItem = itemMap.get(item.id)!
+    if (item.parent_id && itemMap.has(item.parent_id)) {
+      itemMap.get(item.parent_id)!.subItems.push(nestedItem)
+    } else {
+      rootItems.push(nestedItem)
+    }
+  })
+
+  // Sort sub-items by sort_order
+  rootItems.forEach(item => {
+    item.subItems.sort((a, b) => a.sort_order - b.sort_order)
+  })
+
+  return rootItems.sort((a, b) => a.sort_order - b.sort_order)
+}
+
 // Color mapping for UI
-export const colorClasses: Record<ChecklistColor, {
+export const colorClasses: Record<string, {
   bg: string
   text: string
   border: string
@@ -177,7 +247,7 @@ export const colorClasses: Record<ChecklistColor, {
 }
 
 // Priority badge colors
-export const priorityColors: Record<Priority, {
+export const priorityColors: Record<PriorityLevel, {
   bg: string
   text: string
   border: string
@@ -204,14 +274,28 @@ export const priorityColors: Record<Priority, {
   },
 }
 
+// Category display labels
+export const categoryLabels: Record<ChecklistCategory, string> = {
+  'pre_arrival': 'Pre-Arrival',
+  'first_week': 'First Week',
+  'first_month': 'First Month',
+  'ongoing': 'Ongoing',
+  'opt': 'OPT',
+  'cpt': 'CPT',
+  'travel': 'Travel',
+  'graduation': 'Graduation',
+  'custom': 'Custom',
+}
+
 // Category icons mapping
-export const categoryIcons: Record<TemplateCategory, string> = {
-  'pre-arrival': 'Plane',
-  'first-week': 'Building2',
-  'first-month': 'GraduationCap',
-  'documents': 'FileText',
-  'housing': 'Home',
-  'finance': 'DollarSign',
-  'academics': 'BookOpen',
+export const categoryIcons: Record<ChecklistCategory, string> = {
+  'pre_arrival': 'Plane',
+  'first_week': 'Building2',
+  'first_month': 'GraduationCap',
+  'ongoing': 'RefreshCw',
+  'opt': 'Briefcase',
+  'cpt': 'Building',
+  'travel': 'MapPin',
+  'graduation': 'Award',
   'custom': 'ListTodo',
 }

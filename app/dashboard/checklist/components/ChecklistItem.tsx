@@ -19,8 +19,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
-import type { ChecklistItem as ChecklistItemType, Priority } from '@/types/checklist'
+import type { ChecklistItem as ChecklistItemType, PriorityLevel } from '@/types/checklist'
 import { priorityColors } from '@/types/checklist'
 
 interface ChecklistItemProps {
@@ -67,7 +66,7 @@ export function ChecklistItem({
     }
   }
 
-  const priorityLabels: Record<Priority, string> = {
+  const priorityLabels: Record<PriorityLevel, string> = {
     low: 'Low',
     medium: 'Medium',
     high: 'High',
@@ -82,7 +81,7 @@ export function ChecklistItem({
       animate={{ opacity: isDragging ? 0.5 : 1, y: 0 }}
       exit={{ opacity: 0, y: -10 }}
       className={`group flex items-center gap-2 p-3 rounded-xl transition-all ${
-        item.completed
+        item.is_completed
           ? 'bg-green-50 hover:bg-green-100'
           : 'bg-gray-50 hover:bg-gray-100'
       } ${isDragging ? 'shadow-lg ring-2 ring-blue-500' : ''}`}
@@ -101,7 +100,7 @@ export function ChecklistItem({
         onClick={onToggle}
         className="flex-shrink-0 focus:outline-none"
       >
-        {item.completed ? (
+        {item.is_completed ? (
           <CheckCircle2 className="h-5 w-5 text-green-500" />
         ) : (
           <Circle className="h-5 w-5 text-gray-300 hover:text-gray-400" />
@@ -113,14 +112,14 @@ export function ChecklistItem({
         <div className="flex items-center gap-2 flex-wrap">
           <span
             className={`text-sm ${
-              item.completed ? 'text-green-700 line-through' : 'text-gray-700'
+              item.is_completed ? 'text-green-700 line-through' : 'text-gray-700'
             }`}
           >
             {item.title}
           </span>
 
           {/* Priority Badge */}
-          {item.priority !== 'low' && !item.completed && (
+          {item.priority !== 'low' && !item.is_completed && (
             <span
               className={`text-xs px-2 py-0.5 rounded-full ${priorityColors[item.priority].bg} ${priorityColors[item.priority].text}`}
             >
@@ -129,7 +128,7 @@ export function ChecklistItem({
           )}
 
           {/* Due Date Badge */}
-          {item.due_date && !item.completed && (
+          {item.due_date && !item.is_completed && (
             <span className={`text-xs px-2 py-0.5 rounded-full flex items-center gap-1 ${formatDueDate(item.due_date).color}`}>
               <Calendar className="h-3 w-3" />
               {formatDueDate(item.due_date).text}
@@ -138,14 +137,14 @@ export function ChecklistItem({
         </div>
 
         {item.description && (
-          <p className={`text-xs mt-1 ${item.completed ? 'text-green-600' : 'text-gray-500'}`}>
+          <p className={`text-xs mt-1 ${item.is_completed ? 'text-green-600' : 'text-gray-500'}`}>
             {item.description}
           </p>
         )}
       </div>
 
       {/* Completed sparkle */}
-      {item.completed && (
+      {item.is_completed && (
         <Sparkles className="h-4 w-4 text-green-400 flex-shrink-0" />
       )}
 
@@ -161,7 +160,7 @@ export function ChecklistItem({
             <Pencil className="h-4 w-4 mr-2" />
             Edit
           </DropdownMenuItem>
-          <DropdownMenuItem onClick={onDelete} variant="destructive">
+          <DropdownMenuItem onClick={onDelete} className="text-red-600">
             <Trash2 className="h-4 w-4 mr-2" />
             Delete
           </DropdownMenuItem>

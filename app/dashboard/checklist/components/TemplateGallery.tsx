@@ -10,18 +10,8 @@ import {
 } from '@/components/ui/sheet'
 import { TemplateCard } from './TemplateCard'
 import { useTemplates } from '@/hooks/useTemplates'
-import type { TemplateCategory } from '@/types/checklist'
-
-const categoryLabels: Record<TemplateCategory, string> = {
-  'pre-arrival': 'Pre-Arrival',
-  'first-week': 'First Week',
-  'first-month': 'First Month',
-  'documents': 'Documents',
-  'housing': 'Housing',
-  'finance': 'Finance',
-  'academics': 'Academics',
-  'custom': 'Custom',
-}
+import type { ChecklistCategory } from '@/types/checklist'
+import { categoryLabels } from '@/types/checklist'
 
 interface TemplateGalleryProps {
   open: boolean
@@ -35,6 +25,7 @@ export function TemplateGallery({ open, onClose, onAddTemplate }: TemplateGaller
     featuredTemplates,
     categories,
     isLoading,
+    error,
     searchQuery,
     setSearchQuery,
     selectedCategory,
@@ -98,7 +89,7 @@ export function TemplateGallery({ open, onClose, onAddTemplate }: TemplateGaller
                   : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
               }`}
             >
-              {categoryLabels[cat]}
+              {categoryLabels[cat] || cat}
             </button>
           ))}
         </div>
@@ -109,6 +100,11 @@ export function TemplateGallery({ open, onClose, onAddTemplate }: TemplateGaller
             {[1, 2, 3].map((i) => (
               <div key={i} className="animate-pulse bg-gray-100 rounded-xl h-32" />
             ))}
+          </div>
+        ) : error ? (
+          <div className="text-center py-12">
+            <p className="text-red-500 mb-2">Failed to load templates</p>
+            <p className="text-gray-500 text-sm">Please try again later</p>
           </div>
         ) : filteredTemplates.length === 0 ? (
           <div className="text-center py-12">

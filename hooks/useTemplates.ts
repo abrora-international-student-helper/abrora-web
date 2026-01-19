@@ -3,14 +3,14 @@
 import { useEffect, useState, useMemo } from 'react'
 import { useChecklistStore } from '@/stores/checklist-store'
 import { fetchTemplates } from '@/lib/supabase/queries/checklist'
-import type { ChecklistTemplate, TemplateCategory } from '@/types/checklist'
+import type { ChecklistTemplate, ChecklistCategory } from '@/types/checklist'
 
 export function useTemplates() {
   const store = useChecklistStore()
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [searchQuery, setSearchQuery] = useState('')
-  const [selectedCategory, setSelectedCategory] = useState<TemplateCategory | 'all'>('all')
+  const [selectedCategory, setSelectedCategory] = useState<ChecklistCategory | 'all'>('all')
 
   // Fetch templates on mount
   useEffect(() => {
@@ -24,6 +24,7 @@ export function useTemplates() {
       try {
         const templates = await fetchTemplates()
         store.setTemplates(templates)
+        // No error - fetchTemplates returns empty array on failure
       } catch (err) {
         console.error('Failed to load templates:', err)
         setError('Failed to load templates. Please try again.')

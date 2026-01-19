@@ -10,6 +10,11 @@ import {
   DollarSign,
   BookOpen,
   ListTodo,
+  RefreshCw,
+  Briefcase,
+  Building,
+  MapPin,
+  Award,
 } from 'lucide-react'
 import {
   Dialog,
@@ -19,16 +24,17 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import type { UserChecklist, CreateChecklistInput, TemplateCategory, ChecklistColor } from '@/types/checklist'
+import type { UserChecklist, CreateChecklistInput, ChecklistCategory, ChecklistColor } from '@/types/checklist'
 
-const categoryOptions: { value: TemplateCategory; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
-  { value: 'pre-arrival', label: 'Pre-Arrival', icon: Plane },
-  { value: 'first-week', label: 'First Week', icon: Building2 },
-  { value: 'first-month', label: 'First Month', icon: GraduationCap },
-  { value: 'documents', label: 'Documents', icon: FileText },
-  { value: 'housing', label: 'Housing', icon: Home },
-  { value: 'finance', label: 'Finance', icon: DollarSign },
-  { value: 'academics', label: 'Academics', icon: BookOpen },
+const categoryOptions: { value: ChecklistCategory; label: string; icon: React.ComponentType<{ className?: string }> }[] = [
+  { value: 'pre_arrival', label: 'Pre-Arrival', icon: Plane },
+  { value: 'first_week', label: 'First Week', icon: Building2 },
+  { value: 'first_month', label: 'First Month', icon: GraduationCap },
+  { value: 'ongoing', label: 'Ongoing', icon: RefreshCw },
+  { value: 'opt', label: 'OPT', icon: Briefcase },
+  { value: 'cpt', label: 'CPT', icon: Building },
+  { value: 'travel', label: 'Travel', icon: MapPin },
+  { value: 'graduation', label: 'Graduation', icon: Award },
   { value: 'custom', label: 'Custom', icon: ListTodo },
 ]
 
@@ -58,7 +64,7 @@ export function CreateChecklistDialog({
 }: CreateChecklistDialogProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [category, setCategory] = useState<TemplateCategory>('custom')
+  const [category, setCategory] = useState<ChecklistCategory>('custom')
   const [color, setColor] = useState<ChecklistColor>('blue')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -71,7 +77,7 @@ export function CreateChecklistDialog({
         setTitle(checklist.title)
         setDescription(checklist.description || '')
         setCategory(checklist.category)
-        setColor(checklist.color)
+        setColor((checklist.color as ChecklistColor) || 'blue')
       } else {
         setTitle('')
         setDescription('')
@@ -148,7 +154,7 @@ export function CreateChecklistDialog({
           {/* Category */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Category</label>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-3 gap-2">
               {categoryOptions.map((option) => {
                 const Icon = option.icon
                 const isSelected = category === option.value

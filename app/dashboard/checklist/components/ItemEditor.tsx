@@ -9,20 +9,21 @@ import {
   DialogDescription,
   DialogFooter,
 } from '@/components/ui/dialog'
-import type { ChecklistItem, Priority, CreateItemInput, UpdateItemInput } from '@/types/checklist'
+import type { ChecklistItem, PriorityLevel, CreateItemInput, UpdateItemInput } from '@/types/checklist'
 
 interface ItemEditorProps {
   open: boolean
   checklistId: string
   item: ChecklistItem | null
+  parentId?: string | null
   onClose: () => void
   onSave: (data: CreateItemInput | UpdateItemInput) => void
 }
 
-export function ItemEditor({ open, checklistId, item, onClose, onSave }: ItemEditorProps) {
+export function ItemEditor({ open, checklistId, item, parentId, onClose, onSave }: ItemEditorProps) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
-  const [priority, setPriority] = useState<Priority>('medium')
+  const [priority, setPriority] = useState<PriorityLevel>('medium')
   const [dueDate, setDueDate] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -62,12 +63,15 @@ export function ItemEditor({ open, checklistId, item, onClose, onSave }: ItemEdi
         }
         await onSave(updateData)
       } else {
+        // Get the category from the checklist (we'll pass it from the parent)
         const createData: CreateItemInput = {
           checklist_id: checklistId,
+          category: 'custom', // Default to custom for user-created items
           title: title.trim(),
           description: description.trim() || undefined,
           priority,
           due_date: dueDate || undefined,
+          parent_id: parentId || undefined,
         }
         await onSave(createData)
       }
@@ -80,10 +84,14 @@ export function ItemEditor({ open, checklistId, item, onClose, onSave }: ItemEdi
     <Dialog open={open} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{isEditing ? 'Edit Item' : 'Add New Item'}</DialogTitle>
+          <DialogTitle>
+            {isEditing ? 'Edit Item' : parentId ? 'Add Sub-task' : 'Add New Item'}
+          </DialogTitle>
           <DialogDescription>
             {isEditing
               ? 'Update the details of this checklist item.'
+              : parentId
+              ? 'Add a sub-task under the selected item.'
               : 'Add a new item to your checklist.'}
           </DialogDescription>
         </DialogHeader>
@@ -129,7 +137,7 @@ export function ItemEditor({ open, checklistId, item, onClose, onSave }: ItemEdi
             <select
               id="priority"
               value={priority}
-              onChange={(e) => setPriority(e.target.value as Priority)}
+              onChange={(e) => setPriority(e.target.value as PriorityLevel)}
               className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
             >
               <option value="low">Low</option>

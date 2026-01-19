@@ -6,36 +6,38 @@ import {
   Plane,
   Building2,
   GraduationCap,
-  FileText,
-  Home,
-  DollarSign,
-  BookOpen,
   ListTodo,
   Star,
   Users,
   ChevronDown,
   ChevronUp,
   Plus,
+  RefreshCw,
+  Briefcase,
+  Building,
+  MapPin,
+  Award,
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
-import type { ChecklistTemplate, TemplateCategory } from '@/types/checklist'
+import type { ChecklistTemplate, ChecklistCategory, TemplateDifficulty } from '@/types/checklist'
 import { colorClasses } from '@/types/checklist'
 
-const categoryIconMap: Record<TemplateCategory, React.ComponentType<{ className?: string }>> = {
-  'pre-arrival': Plane,
-  'first-week': Building2,
-  'first-month': GraduationCap,
-  'documents': FileText,
-  'housing': Home,
-  'finance': DollarSign,
-  'academics': BookOpen,
+const categoryIconMap: Record<ChecklistCategory, React.ComponentType<{ className?: string }>> = {
+  'pre_arrival': Plane,
+  'first_week': Building2,
+  'first_month': GraduationCap,
+  'ongoing': RefreshCw,
+  'opt': Briefcase,
+  'cpt': Building,
+  'travel': MapPin,
+  'graduation': Award,
   'custom': ListTodo,
 }
 
-const difficultyColors = {
+const difficultyColors: Record<TemplateDifficulty, string> = {
   easy: 'bg-green-100 text-green-700',
   medium: 'bg-yellow-100 text-yellow-700',
-  hard: 'bg-red-100 text-red-700',
+  complex: 'bg-red-100 text-red-700',
 }
 
 interface TemplateCardProps {
@@ -46,8 +48,13 @@ interface TemplateCardProps {
 export function TemplateCard({ template, onAdd }: TemplateCardProps) {
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const colors = colorClasses[template.color]
+  const colors = colorClasses[template.color] || colorClasses.blue
   const IconComponent = categoryIconMap[template.category] || ListTodo
+
+  // Calculate average rating
+  const avgRating = template.rating_count > 0
+    ? (template.rating_sum / template.rating_count).toFixed(1)
+    : '0'
 
   return (
     <div className="bg-white rounded-xl border border-gray-200 overflow-hidden hover:shadow-md transition-shadow">
@@ -89,10 +96,10 @@ export function TemplateCard({ template, onAdd }: TemplateCardProps) {
                 {template.usage_count} uses
               </span>
 
-              {template.rating > 0 && (
+              {template.rating_count > 0 && (
                 <span className="text-xs text-gray-500 flex items-center gap-1">
                   <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                  {template.rating.toFixed(1)}
+                  {avgRating}
                 </span>
               )}
             </div>

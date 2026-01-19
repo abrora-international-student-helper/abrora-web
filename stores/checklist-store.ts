@@ -5,9 +5,17 @@ import type {
   ChecklistTemplate,
   ChecklistFilter,
   ChecklistProgress,
-  Priority,
-  TemplateCategory,
+  PriorityLevel,
+  ChecklistCategory,
+  ChecklistStatus,
 } from '@/types/checklist'
+
+interface SummaryStats {
+  allCount: number
+  todayCount: number
+  completedCount: number
+  highPriorityCount: number
+}
 
 interface ChecklistState {
   // Data
@@ -19,12 +27,13 @@ interface ChecklistState {
   error: string | null
   filter: ChecklistFilter
   expandedIds: Set<string>
+  selectedChecklistId: string | null
 
   // Dialogs
   isCreateDialogOpen: boolean
   isTemplateGalleryOpen: boolean
   isItemEditorOpen: boolean
-  editingItem: { checklistId: string; item: ChecklistItem | null } | null
+  editingItem: { checklistId: string; item: ChecklistItem | null; parentId: string | null } | null
   editingChecklist: UserChecklist | null
 
   // Actions - Data
@@ -50,13 +59,14 @@ interface ChecklistState {
   toggleExpanded: (id: string) => void
   expandAll: () => void
   collapseAll: () => void
+  setSelectedChecklist: (id: string | null) => void
 
   // Actions - Dialogs
   openCreateDialog: () => void
   closeCreateDialog: () => void
   openTemplateGallery: () => void
   closeTemplateGallery: () => void
-  openItemEditor: (checklistId: string, item?: ChecklistItem) => void
+  openItemEditor: (checklistId: string, item?: ChecklistItem, parentId?: string) => void
   closeItemEditor: () => void
   setEditingChecklist: (checklist: UserChecklist | null) => void
 
@@ -64,6 +74,8 @@ interface ChecklistState {
   getFilteredChecklists: () => UserChecklist[]
   getOverallProgress: () => ChecklistProgress
   getChecklistProgress: (checklistId: string) => ChecklistProgress
+  getSelectedChecklist: () => UserChecklist | null
+  getSummaryStats: () => SummaryStats
 }
 
 const defaultFilter: ChecklistFilter = {
@@ -81,6 +93,7 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
   error: null,
   filter: defaultFilter,
   expandedIds: new Set<string>(),
+  selectedChecklistId: null,
 
   // Dialog state
   isCreateDialogOpen: false,
@@ -112,6 +125,7 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
       return {
         checklists: state.checklists.filter((c) => c.id !== id),
         expandedIds: newExpandedIds,
+        selectedChecklistId: state.selectedChecklistId === id ? null : state.selectedChecklistId,
       }
     }),
 
@@ -126,8 +140,8 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
                 item.id === itemId
                   ? {
                       ...item,
-                      completed: !item.completed,
-                      completed_at: !item.completed
+                      is_completed: !item.is_completed,
+                      completed_at: !item.is_completed
                         ? new Date().toISOString()
                         : null,
                     }
@@ -211,6 +225,8 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
 
   collapseAll: () => set({ expandedIds: new Set() }),
 
+  setSelectedChecklist: (id) => set({ selectedChecklistId: id }),
+
   // Dialog actions
   openCreateDialog: () => set({ isCreateDialogOpen: true }),
   closeCreateDialog: () =>
@@ -219,10 +235,10 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
   openTemplateGallery: () => set({ isTemplateGalleryOpen: true }),
   closeTemplateGallery: () => set({ isTemplateGalleryOpen: false }),
 
-  openItemEditor: (checklistId, item) =>
+  openItemEditor: (checklistId, item, parentId) =>
     set({
       isItemEditorOpen: true,
-      editingItem: { checklistId, item: item || null },
+      editingItem: { checklistId, item: item || null, parentId: parentId || null },
     }),
 
   closeItemEditor: () => set({ isItemEditorOpen: false, editingItem: null }),
@@ -236,11 +252,15 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
     return checklists.filter((checklist) => {
       // Status filter
       if (filter.status !== 'all') {
-        const allCompleted = checklist.items.every((i) => i.completed)
-        const hasIncomplete = checklist.items.some((i) => !i.completed)
+        const allCompleted = checklist.items.every((i) => i.is_completed)
+        const hasIncomplete = checklist.items.some((i) => !i.is_completed)
 
         if (filter.status === 'completed' && !allCompleted) return false
-        if (filter.status === 'active' && !hasIncomplete) return false
+        if (filter.status === 'not_started' && !hasIncomplete) return false
+        if (filter.status === 'in_progress') {
+          const someCompleted = checklist.items.some((i) => i.is_completed)
+          if (!someCompleted || allCompleted) return false
+        }
       }
 
       // Category filter
@@ -261,7 +281,7 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
       // Priority filter - checks if any item matches
       if (filter.priority !== 'all') {
         const hasMatchingPriority = checklist.items.some(
-          (item) => item.priority === filter.priority && !item.completed
+          (item) => item.priority === filter.priority && !item.is_completed
         )
         if (!hasMatchingPriority) return false
       }
@@ -275,7 +295,7 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
 
     const total = checklists.reduce((sum, c) => sum + c.items.length, 0)
     const completed = checklists.reduce(
-      (sum, c) => sum + c.items.filter((i) => i.completed).length,
+      (sum, c) => sum + c.items.filter((i) => i.is_completed).length,
       0
     )
 
@@ -294,12 +314,57 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
     }
 
     const total = checklist.items.length
-    const completed = checklist.items.filter((i) => i.completed).length
+    const completed = checklist.items.filter((i) => i.is_completed).length
 
     return {
       total,
       completed,
       percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
     }
+  },
+
+  getSelectedChecklist: () => {
+    const { checklists, selectedChecklistId } = get()
+    if (!selectedChecklistId) return null
+    return checklists.find((c) => c.id === selectedChecklistId) || null
+  },
+
+  getSummaryStats: () => {
+    const { checklists } = get()
+    const today = new Date()
+    today.setHours(0, 0, 0, 0)
+    const tomorrow = new Date(today)
+    tomorrow.setDate(tomorrow.getDate() + 1)
+
+    let allCount = 0
+    let todayCount = 0
+    let completedCount = 0
+    let highPriorityCount = 0
+
+    checklists.forEach((checklist) => {
+      checklist.items.forEach((item) => {
+        allCount++
+
+        if (item.is_completed) {
+          completedCount++
+        } else {
+          // Check if due today
+          if (item.due_date) {
+            const dueDate = new Date(item.due_date)
+            dueDate.setHours(0, 0, 0, 0)
+            if (dueDate.getTime() === today.getTime()) {
+              todayCount++
+            }
+          }
+
+          // Check if high priority
+          if (item.priority === 'high' || item.priority === 'critical') {
+            highPriorityCount++
+          }
+        }
+      })
+    })
+
+    return { allCount, todayCount, completedCount, highPriorityCount }
   },
 }))

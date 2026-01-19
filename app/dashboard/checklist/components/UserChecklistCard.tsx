@@ -32,6 +32,11 @@ import {
   DollarSign,
   BookOpen,
   ListTodo,
+  RefreshCw,
+  Briefcase,
+  Building,
+  MapPin,
+  Award,
 } from 'lucide-react'
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from '@/components/ui/card'
 import { Progress } from '@/components/ui/progress'
@@ -42,17 +47,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ChecklistItem } from './ChecklistItem'
-import type { UserChecklist, ChecklistItem as ChecklistItemType, TemplateCategory, ChecklistProgress } from '@/types/checklist'
+import type { UserChecklist, ChecklistItem as ChecklistItemType, ChecklistCategory, ChecklistProgress } from '@/types/checklist'
 import { colorClasses } from '@/types/checklist'
 
-const categoryIconMap: Record<TemplateCategory, React.ComponentType<{ className?: string }>> = {
-  'pre-arrival': Plane,
-  'first-week': Building2,
-  'first-month': GraduationCap,
-  'documents': FileText,
-  'housing': Home,
-  'finance': DollarSign,
-  'academics': BookOpen,
+const categoryIconMap: Record<ChecklistCategory, React.ComponentType<{ className?: string }>> = {
+  'pre_arrival': Plane,
+  'first_week': Building2,
+  'first_month': GraduationCap,
+  'ongoing': RefreshCw,
+  'opt': Briefcase,
+  'cpt': Building,
+  'travel': MapPin,
+  'graduation': Award,
   'custom': ListTodo,
 }
 
@@ -83,7 +89,7 @@ export function UserChecklistCard({
   onDeleteChecklist,
   onReorderItems,
 }: UserChecklistCardProps) {
-  const colors = colorClasses[checklist.color]
+  const colors = colorClasses[checklist.color] || colorClasses.blue
   const IconComponent = categoryIconMap[checklist.category] || ListTodo
 
   const sensors = useSensors(
@@ -113,57 +119,69 @@ export function UserChecklistCard({
 
   return (
     <Card className="overflow-hidden">
-      <button onClick={onToggleExpand} className="w-full text-left">
-        <CardHeader className="pb-3">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className={`p-3 rounded-xl ${colors.light}`}>
-                <IconComponent className={`h-5 w-5 ${colors.text}`} />
-              </div>
-              <div>
-                <CardTitle className="text-lg">{checklist.title}</CardTitle>
-                {checklist.description && (
-                  <CardDescription>{checklist.description}</CardDescription>
-                )}
-              </div>
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          {/* Clickable area for expanding/collapsing */}
+          <div
+            onClick={onToggleExpand}
+            className="flex items-center gap-4 flex-1 cursor-pointer"
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && onToggleExpand()}
+          >
+            <div className={`p-3 rounded-xl ${colors.light}`}>
+              <IconComponent className={`h-5 w-5 ${colors.text}`} />
+            </div>
+            <div>
+              <CardTitle className="text-lg">{checklist.title}</CardTitle>
+              {checklist.description && (
+                <CardDescription>{checklist.description}</CardDescription>
+              )}
+            </div>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="text-right hidden sm:block">
+              <p className="text-sm font-medium text-gray-900">{progress.percentage}%</p>
+              <p className="text-xs text-gray-500">
+                {progress.completed}/{progress.total}
+              </p>
+            </div>
+            <div className="w-24 hidden sm:block">
+              <Progress value={progress.percentage} className="h-2" />
             </div>
 
-            <div className="flex items-center gap-4">
-              <div className="text-right hidden sm:block">
-                <p className="text-sm font-medium text-gray-900">{progress.percentage}%</p>
-                <p className="text-xs text-gray-500">
-                  {progress.completed}/{progress.total}
-                </p>
-              </div>
-              <div className="w-24 hidden sm:block">
-                <Progress value={progress.percentage} className="h-2" />
-              </div>
+            {/* Actions dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="p-1 text-gray-400 hover:text-gray-600">
+                  <MoreHorizontal className="h-5 w-5" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={onAddItem}>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Item
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onEditChecklist}>
+                  <Pencil className="h-4 w-4 mr-2" />
+                  Edit Checklist
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onDeleteChecklist} className="text-red-600">
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
 
-              {/* Actions dropdown - stop propagation to prevent toggle */}
-              <div onClick={(e) => e.stopPropagation()}>
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
-                    <button className="p-1 text-gray-400 hover:text-gray-600">
-                      <MoreHorizontal className="h-5 w-5" />
-                    </button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={onAddItem}>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Add Item
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onEditChecklist}>
-                      <Pencil className="h-4 w-4 mr-2" />
-                      Edit Checklist
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={onDeleteChecklist} variant="destructive">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
-              </div>
-
+            {/* Expand/collapse indicator */}
+            <div
+              onClick={onToggleExpand}
+              className="cursor-pointer p-1"
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => e.key === 'Enter' && onToggleExpand()}
+            >
               {isExpanded ? (
                 <ChevronDown className="h-5 w-5 text-gray-400" />
               ) : (
@@ -171,8 +189,8 @@ export function UserChecklistCard({
               )}
             </div>
           </div>
-        </CardHeader>
-      </button>
+        </div>
+      </CardHeader>
 
       <AnimatePresence>
         {isExpanded && (

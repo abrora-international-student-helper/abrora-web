@@ -1,6 +1,7 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useState } from 'react'
+import { createClient } from '@/lib/supabase/client'
 import { useChecklistStore } from '@/stores/checklist-store'
 import {
   fetchUserChecklists,
@@ -22,42 +23,65 @@ import type {
   ChecklistItem,
 } from '@/types/checklist'
 
-// Mock user ID - in production, get from auth context
-const MOCK_USER_ID = '00000000-0000-0000-0000-000000000001'
-
 export function useChecklists() {
   const store = useChecklistStore()
+  const [userId, setUserId] = useState<string | null>(null)
+  const supabase = createClient()
 
-  // Fetch checklists on mount
+  // Get the authenticated user
   useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUserId(user?.id || null)
+    }
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUserId(session?.user?.id || null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [supabase.auth])
+
+  // Fetch checklists when user is available
+  useEffect(() => {
+    if (!userId) {
+      store.setChecklists([])
+      store.setLoading(false)
+      return
+    }
+
     const loadChecklists = async () => {
       store.setLoading(true)
       store.setError(null)
 
       try {
-        const checklists = await fetchUserChecklists(MOCK_USER_ID)
+        const checklists = await fetchUserChecklists(userId)
         store.setChecklists(checklists)
 
         // Auto-expand the first checklist
         if (checklists.length > 0 && store.expandedIds.size === 0) {
           store.toggleExpanded(checklists[0].id)
         }
+        // No error set - fetchUserChecklists returns empty array on failure
       } catch (error) {
         console.error('Failed to load checklists:', error)
-        store.setError('Failed to load checklists. Please try again.')
+        // Don't set error - show empty state instead
       } finally {
         store.setLoading(false)
       }
     }
 
     loadChecklists()
-  }, [])
+  }, [userId])
 
   // Create checklist with optimistic update
   const handleCreateChecklist = useCallback(
     async (input: CreateChecklistInput) => {
+      if (!userId) throw new Error('User not authenticated')
+
       try {
-        const checklist = await createChecklist(MOCK_USER_ID, input)
+        const checklist = await createChecklist(userId, input)
         store.addChecklist(checklist)
         store.closeCreateDialog()
         return checklist
@@ -67,7 +91,7 @@ export function useChecklists() {
         throw error
       }
     },
-    []
+    [userId]
   )
 
   // Update checklist with optimistic update
@@ -129,7 +153,7 @@ export function useChecklists() {
       store.toggleItem(checklistId, itemId)
 
       try {
-        await toggleItemApi(itemId, !item.completed)
+        await toggleItemApi(itemId, !item.is_completed)
       } catch (error) {
         // Rollback on error
         store.toggleItem(checklistId, itemId)
@@ -144,8 +168,10 @@ export function useChecklists() {
   // Create item with optimistic update
   const handleCreateItem = useCallback(
     async (input: CreateItemInput) => {
+      if (!userId) throw new Error('User not authenticated')
+
       try {
-        const item = await createItem(input)
+        const item = await createItem(userId, input)
         store.addItem(input.checklist_id, item)
         store.closeItemEditor()
         return item
@@ -155,7 +181,7 @@ export function useChecklists() {
         throw error
       }
     },
-    []
+    [userId]
   )
 
   // Update item with optimistic update
@@ -238,8 +264,10 @@ export function useChecklists() {
   // Add checklist from template
   const handleAddFromTemplate = useCallback(
     async (templateId: string) => {
+      if (!userId) throw new Error('User not authenticated')
+
       try {
-        const checklist = await copyTemplateToUser(MOCK_USER_ID, templateId)
+        const checklist = await copyTemplateToUser(userId, templateId)
         store.addChecklist(checklist)
         store.closeTemplateGallery()
         return checklist
@@ -249,7 +277,7 @@ export function useChecklists() {
         throw error
       }
     },
-    []
+    [userId]
   )
 
   return {
@@ -259,6 +287,7 @@ export function useChecklists() {
     error: store.error,
     filter: store.filter,
     expandedIds: store.expandedIds,
+    isAuthenticated: !!userId,
 
     // Computed
     filteredChecklists: store.getFilteredChecklists(),
