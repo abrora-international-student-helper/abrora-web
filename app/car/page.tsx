@@ -22,7 +22,7 @@ export default function CarGuidePage() {
       icon: "💸", 
       desc: "Understanding insurance and hidden fees.", 
       bg: "bg-orange-50/50", 
-      href: "#" 
+      href: "/car/budget" 
     },
     { 
       id: "buying", 
@@ -30,7 +30,7 @@ export default function CarGuidePage() {
       icon: "🚗", 
       desc: "Expert advice on finding reliable used cars.", 
       bg: "bg-indigo-50/50", 
-      href: "#" 
+      href: "/car/buyingtips" 
     },
     { 
       id: "insurance", 
