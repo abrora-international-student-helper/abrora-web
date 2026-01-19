@@ -1,14 +1,15 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import type { User as SupabaseUser } from '@supabase/supabase-js'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   LayoutDashboard,
   FileText,
   BarChart3,
-  Settings,
   Bell,
   CreditCard,
   Car,
@@ -18,10 +19,14 @@ import {
   Menu,
   LogOut,
   User,
+  Settings,
+  CheckSquare,
+  Newspaper,
 } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { Badge } from '@/components/ui/badge'
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -30,14 +35,15 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { Badge } from '@/components/ui/badge'
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip'
 
 const navItems = [
   { name: 'Overview', href: '/dashboard', icon: LayoutDashboard },
   { name: 'Documents', href: '/dashboard/documents', icon: FileText, badge: '3' },
-  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
+  { name: 'Checklist', href: '/dashboard/checklist', icon: CheckSquare },
   { name: 'Reminders', href: '/dashboard/reminders', icon: Bell, badge: '2' },
+  { name: 'News', href: '/dashboard/news', icon: Newspaper, badge: '1' },
+  { name: 'Analytics', href: '/dashboard/analytics', icon: BarChart3 },
 ]
 
 const resourceItems = [
@@ -53,7 +59,31 @@ export default function DashboardLayout({
   children: React.ReactNode
 }) {
   const [collapsed, setCollapsed] = useState(false)
+  const [user, setUser] = useState<SupabaseUser | null>(null)
+  const [loading, setLoading] = useState(true)
   const pathname = usePathname()
+  const router = useRouter()
+  const supabase = createClient()
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      setUser(user)
+      setLoading(false)
+    }
+    getUser()
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null)
+    })
+
+    return () => subscription.unsubscribe()
+  }, [])
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut()
+    router.refresh()
+  }
 
   const NavLink = ({ item, showLabel = true }: { item: typeof navItems[0], showLabel?: boolean }) => {
     const isActive = pathname === item.href ||
@@ -151,51 +181,93 @@ export default function DashboardLayout({
         </div>
       </nav>
 
-      {/* Settings & User */}
-      <div className="p-3 border-t border-gray-100 space-y-1">
-        <NavLink
-          item={{ name: 'Settings', href: '/dashboard/settings', icon: Settings }}
-          showLabel={showLabels}
-        />
-
-        {showLabels && (
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-gray-100 transition-colors">
-                <Avatar className="h-8 w-8">
-                  <AvatarImage src="" />
-                  <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm">
-                    U
-                  </AvatarFallback>
-                </Avatar>
-                <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-gray-900 truncate">User</p>
-                  <p className="text-xs text-gray-500 truncate">user@email.com</p>
-                </div>
-              </button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-56">
-              <DropdownMenuLabel>My Account</DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem asChild>
-                <Link href="/edit-profile" className="cursor-pointer">
-                  <User className="mr-2 h-4 w-4" />
-                  Edit Profile
+      {/* User */}
+      <div className="p-3 border-t border-gray-100">
+        {user ? (
+          // Logged in state
+          showLabels ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl hover:bg-gray-100 transition-colors">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.user_metadata?.avatar_url || ''} />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm">
+                      {user.email?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 text-left">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {user.user_metadata?.full_name || user.email?.split('@')[0] || 'User'}
+                    </p>
+                    <p className="text-xs text-gray-500 truncate">{user.email}</p>
+                  </div>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-56">
+                <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem asChild>
+                  <Link href="/edit-profile" className="cursor-pointer">
+                    <User className="mr-2 h-4 w-4" />
+                    Edit Profile
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                  <Link href="/dashboard/settings" className="cursor-pointer">
+                    <Settings className="mr-2 h-4 w-4" />
+                    Settings
+                  </Link>
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="text-red-600 cursor-pointer">
+                  <LogOut className="mr-2 h-4 w-4" />
+                  Log out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Link href="/dashboard/settings" className="flex justify-center">
+                  <Avatar className="h-8 w-8">
+                    <AvatarImage src={user.user_metadata?.avatar_url || ''} />
+                    <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm">
+                      {user.email?.charAt(0).toUpperCase() || 'U'}
+                    </AvatarFallback>
+                  </Avatar>
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuItem asChild>
-                <Link href="/dashboard/settings" className="cursor-pointer">
-                  <Settings className="mr-2 h-4 w-4" />
-                  Settings
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">
+                Account
+              </TooltipContent>
+            </Tooltip>
+          )
+        ) : (
+          // Guest state - show sign in button
+          showLabels ? (
+            <Link
+              href="/login"
+              className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl bg-blue-50 hover:bg-blue-100 transition-colors text-blue-700"
+            >
+              <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                <User className="h-4 w-4 text-blue-600" />
+              </div>
+              <span className="text-sm font-medium">Sign In</span>
+            </Link>
+          ) : (
+            <Tooltip delayDuration={0}>
+              <TooltipTrigger asChild>
+                <Link href="/login" className="flex justify-center">
+                  <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                    <User className="h-4 w-4 text-blue-600" />
+                  </div>
                 </Link>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem className="text-red-600 cursor-pointer">
-                <LogOut className="mr-2 h-4 w-4" />
-                Log out
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </TooltipTrigger>
+              <TooltipContent side="right" className="font-medium">
+                Sign In
+              </TooltipContent>
+            </Tooltip>
+          )
         )}
       </div>
     </div>
@@ -224,11 +296,21 @@ export default function DashboardLayout({
             <span className="font-semibold text-gray-900">Abrora</span>
           </Link>
 
-          <Avatar className="h-8 w-8">
-            <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm">
-              U
-            </AvatarFallback>
-          </Avatar>
+          {user ? (
+            <Avatar className="h-8 w-8">
+              <AvatarImage src={user.user_metadata?.avatar_url || ''} />
+              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-indigo-500 text-white text-sm">
+                {user.email?.charAt(0).toUpperCase() || 'U'}
+              </AvatarFallback>
+            </Avatar>
+          ) : (
+            <Link
+              href="/login"
+              className="px-3 py-1.5 text-sm font-medium text-blue-600 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
+            >
+              Sign In
+            </Link>
+          )}
         </header>
 
         {/* Desktop Sidebar */}

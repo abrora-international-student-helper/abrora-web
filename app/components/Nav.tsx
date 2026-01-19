@@ -1,14 +1,16 @@
 "use client"
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { createClient } from '@/lib/supabase/client';
+import type { User } from '@supabase/supabase-js';
 import {
   FileText, Shield, Landmark, GraduationCap,
   Briefcase, HeartPulse, Plane, CreditCard,
   Car, Brain, AlertTriangle, Trophy,
   Globe, CheckCircle, ArrowRight, Folder,
   Stethoscope, Syringe, ShoppingBag, Newspaper,
-  Flag, Bell
+  Flag, Bell, LayoutDashboard
 } from 'lucide-react';
 
 const Navbar = () => {
@@ -16,6 +18,22 @@ const Navbar = () => {
   const [infoOpen, setInfoOpen] = useState(false);
   const [checklistOpen, setChecklistOpen] = useState(false);
   const [newsOpen, setNewsOpen] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const getUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      setUser(user);
+    };
+    getUser();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setUser(session?.user ?? null);
+    });
+
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="relative z-50">
@@ -182,8 +200,17 @@ const Navbar = () => {
 
         {/* Actions */}
         <div className="flex items-center gap-3">
-          <Link href="/login" className="hidden rounded-xl px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors md:inline-flex">Sign In</Link>
-          <Link href="/signup" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">Get Started</Link>
+          {user ? (
+            <Link href="/dashboard" className="hidden rounded-xl px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors md:inline-flex items-center gap-2">
+              <LayoutDashboard className="h-4 w-4" />
+              Dashboard
+            </Link>
+          ) : (
+            <Link href="/login" className="hidden rounded-xl px-4 py-2 text-sm font-semibold text-gray-700 hover:bg-gray-100 transition-colors md:inline-flex">Sign In</Link>
+          )}
+          {!user && (
+            <Link href="/signup" className="inline-flex items-center justify-center rounded-xl bg-gradient-to-r from-primary to-secondary px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-all">Get Started</Link>
+          )}
         </div>
       </div>
     </header>
