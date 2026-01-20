@@ -2,8 +2,6 @@
 
 import React from 'react'
 import { motion } from 'framer-motion'
-import Navbar from "../../components/Nav";
-import Footer from "../../components/common/footer";
 
 export default function LicenseGuidePage() {
   const containerVars = {
@@ -18,8 +16,6 @@ export default function LicenseGuidePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#F9F9F7] text-[#2D312E] font-sans">
-      <Navbar />
-      
       {/* Mesh Background */}
       <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
         <div className="absolute top-[-10%] right-[-5%] w-[50%] h-[40%] bg-[#E8F0EE] rounded-full blur-[120px] opacity-60" />
@@ -167,7 +163,6 @@ export default function LicenseGuidePage() {
         </motion.div>
 
       </motion.div>
-      <Footer />
     </div>
   )
 }

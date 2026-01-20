@@ -2,7 +2,6 @@
 
 import React from "react";
 import Link from "next/link";
-import Navbar from "../components/Nav";
 
 const paths = [
   {
@@ -31,8 +30,6 @@ const paths = [
 export default function CreditPage() {
   return (
     <div className="min-h-screen bg-white text-gray-900">
-      <Navbar />
-
       {/* HERO */}
       <section className="relative overflow-hidden pt-16 pb-12 text-center">
         {/* soft accent only */}

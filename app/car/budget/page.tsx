@@ -3,8 +3,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Navbar from "../../components/Nav"
-import Footer from "../../components/common/footer"
 
 export default function BudgetGuidePage() {
   const containerVars = {
@@ -22,8 +20,6 @@ export default function BudgetGuidePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-background text-foreground font-sans selection:bg-primary-light">
-      <Navbar />
-      
       {/* Mesh Backgrounds - Using Blue Theme Variables */}
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.3, 0.5, 0.3] }}
@@ -187,7 +183,6 @@ export default function BudgetGuidePage() {
           </div>
         </footer>
       </motion.div>
-      <Footer />
     </div>
   )
 }

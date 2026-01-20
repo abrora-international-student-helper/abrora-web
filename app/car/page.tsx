@@ -3,8 +3,6 @@
 import React from 'react'
 import { motion } from 'framer-motion'
 import Link from 'next/link'
-import Navbar from '../components/Nav'
-import Footer from '../components/common/footer'
 
 export default function CarGuidePage() {
   const categories = [
@@ -57,8 +55,6 @@ export default function CarGuidePage() {
 
   return (
     <div className="min-h-screen relative overflow-hidden bg-[#F9F9F7] text-[#2D312E] font-sans">
-      <Navbar />
-      
       {/* Mesh Backgrounds */}
       <motion.div 
         animate={{ scale: [1, 1.1, 1], opacity: [0.5, 0.7, 0.5] }}
@@ -171,7 +167,6 @@ export default function CarGuidePage() {
           </Link>
         </footer>
       </motion.div>
-      <Footer />
     </div>
   )
 }
