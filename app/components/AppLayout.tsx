@@ -227,7 +227,7 @@ export default function AppLayout({
   )
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
+    <div className="fixed inset-0 bg-gray-50/50 z-50">
       {/* Mobile Header */}
       <header className="lg:hidden fixed top-0 left-0 right-0 h-14 bg-white border-b border-gray-200 z-40 flex items-center justify-between px-4">
         <button
@@ -283,8 +283,8 @@ export default function AppLayout({
       </aside>
 
       {/* Main Content */}
-      <main className="lg:pl-56">
-        <div className="pt-14 lg:pt-0 min-h-screen">
+      <main className="lg:pl-56 h-full overflow-auto">
+        <div className="pt-14 lg:pt-0 min-h-full">
           {children}
         </div>
       </main>
