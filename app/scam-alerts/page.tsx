@@ -50,6 +50,13 @@ export default function ScamAlertPage() {
     }
   ]
 
+  const safetyTips = [
+    { title: 'The 10-Minute Rule', desc: 'If a caller creates a sense of "extreme urgency," hang up. Wait 10 minutes and call the official organization back using a number from their verified website.' },
+    { title: 'Verify the Sender', desc: 'Check for subtle typos in email addresses (e.g., @universlty.edu instead of @university.edu). Scammers rely on you being in a hurry.' },
+    { title: 'Use MFA', desc: 'Enable Multi-Factor Authentication on all accounts. Even if a scammer gets your password, they cannot enter without the second physical device code.' },
+    { title: 'Screen Your Calls', desc: 'Let unknown numbers go to voicemail. Government agencies like the IRS or USCIS will almost always send official physical mail before calling.' }
+  ]
+
   const reportSteps = [
     { title: 'Freeze Activity', desc: 'Immediately stop all communication and block the sender on all channels.' },
     { title: 'Gather Proof', desc: 'Take clear screenshots of the conversation, links, and the scammer’s profile info.' },
@@ -110,68 +117,59 @@ export default function ScamAlertPage() {
           ))}
         </div>
 
-        {/* Educational Insight Section */}
+        {/* NEW: Prevention & Safety Section */}
         <div className="mb-24">
-          <h3 className="text-sm font-bold text-center uppercase tracking-[0.3em] text-slate-400 mb-10">How Phishing Works</h3>
-          <div className="bg-white/30 backdrop-blur-md rounded-[4rem] p-10 border border-white/40 shadow-inner flex flex-col items-center">
-            
-            <p className="text-gray-500 text-sm italic mt-8 text-center max-w-md leading-relaxed">
-              Cyber-criminals often use "Spoofing" to make an email address look official. Always hover over links before clicking.
-            </p>
+          <h3 className="text-sm font-bold uppercase tracking-[0.3em] text-slate-400 mb-10 text-center md:text-left">Preventative Measures</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            {safetyTips.map((tip, idx) => (
+              <div key={idx} className="flex gap-6 p-8 rounded-[2.5rem] bg-white/20 border border-white/40 shadow-sm transition-all hover:bg-white/40">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-blue-600 font-bold">
+                  {idx + 1}
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-800 mb-2">{tip.title}</h4>
+                  <p className="text-sm text-slate-500 leading-relaxed">{tip.desc}</p>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
 
         {/* Action Protocol (Interactive Response) */}
         <section className="bg-slate-900 text-white rounded-[4rem] p-12 md:p-20 shadow-2xl relative overflow-hidden">
-          <div className="grid lg:grid-cols-2 gap-16 relative z-10">
-            <div>
-              <h2 className="text-4xl font-bold mb-8">Incident Protocol</h2>
-              <p className="text-slate-400 mb-10 text-lg leading-relaxed">
-                If you have shared information or sent money, every second counts. Follow this priority list:
-              </p>
-              
-              <div className="space-y-3">
-                {reportSteps.map((step, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => setActiveStep(idx)}
-                    className={`w-full text-left p-6 rounded-[2rem] transition-all duration-500 border ${
-                      activeStep === idx 
-                      ? 'bg-blue-600 border-blue-400 shadow-xl translate-x-2' 
-                      : 'bg-white/5 border-white/10 hover:bg-white/10'
-                    }`}
-                  >
-                    <div className="flex items-center gap-4">
-                      <span className={`text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center ${activeStep === idx ? 'bg-white text-blue-600' : 'bg-slate-800 text-slate-400'}`}>
-                        0{idx + 1}
-                      </span>
-                      <h4 className="font-bold text-sm uppercase tracking-widest">{step.title}</h4>
-                    </div>
-                    {activeStep === idx && (
-                      <p className="mt-4 text-sm text-blue-50 leading-relaxed animate-in fade-in slide-in-from-top-1">
-                        {step.desc}
-                      </p>
-                    )}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="flex flex-col justify-center items-center text-center p-10 bg-white/5 backdrop-blur-lg rounded-[3.5rem] border border-white/10 shadow-inner">
-              <div className="w-20 h-20 bg-blue-500 rounded-full flex items-center justify-center text-4xl mb-6 shadow-lg shadow-blue-500/30">
-                🛡️
-              </div>
-              <h3 className="text-2xl font-bold mb-4">Official Help Desk</h3>
-              <p className="text-slate-400 text-sm mb-10 leading-relaxed max-w-xs">
-                Need to file an official government report? Our portal connects you directly to the national cybercrime unit.
-              </p>
-              <button className="w-full py-5 bg-white text-slate-900 rounded-full font-bold text-sm hover:bg-blue-400 hover:text-white transition-all transform active:scale-95 shadow-xl">
-                Open Reporting Portal
-              </button>
+          <div className="max-w-3xl relative z-10">
+            <h2 className="text-4xl font-bold mb-8">Incident Protocol</h2>
+            <p className="text-slate-400 mb-10 text-lg leading-relaxed">
+              If you have shared information or sent money, every second counts. Follow this priority list:
+            </p>
+            
+            <div className="space-y-3">
+              {reportSteps.map((step, idx) => (
+                <button 
+                  key={idx}
+                  onClick={() => setActiveStep(idx)}
+                  className={`w-full text-left p-6 rounded-[2rem] transition-all duration-500 border ${
+                    activeStep === idx 
+                    ? 'bg-blue-600 border-blue-400 shadow-xl translate-x-2' 
+                    : 'bg-white/5 border-white/10 hover:bg-white/10'
+                  }`}
+                >
+                  <div className="flex items-center gap-4">
+                    <span className={`text-xs font-bold w-6 h-6 rounded-full flex items-center justify-center ${activeStep === idx ? 'bg-white text-blue-600' : 'bg-slate-800 text-slate-400'}`}>
+                      0{idx + 1}
+                    </span>
+                    <h4 className="font-bold text-sm uppercase tracking-widest">{step.title}</h4>
+                  </div>
+                  {activeStep === idx && (
+                    <p className="mt-4 text-sm text-blue-50 leading-relaxed animate-in fade-in slide-in-from-top-1">
+                      {step.desc}
+                    </p>
+                  )}
+                </button>
+              ))}
             </div>
           </div>
           
-          {/* Background Decorative Bloom */}
           <div className="absolute top-[-100px] left-[-100px] w-96 h-96 bg-blue-600 rounded-full blur-[150px] opacity-20" />
         </section>
 
