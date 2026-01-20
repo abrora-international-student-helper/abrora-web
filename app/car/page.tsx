@@ -36,7 +36,7 @@ export default function CarGuidePage() {
       icon: "🛡️", 
       desc: "How to get affordable quotes as an international student.", 
       bg: "bg-emerald-50/50", 
-      href: "#" 
+      href: "/car/insurance" 
     },
   ];
 
