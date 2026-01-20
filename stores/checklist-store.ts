@@ -131,26 +131,51 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
 
   // Item actions
   toggleItem: (checklistId, itemId) =>
-    set((state) => ({
-      checklists: state.checklists.map((checklist) =>
-        checklist.id === checklistId
-          ? {
-              ...checklist,
-              items: checklist.items.map((item) =>
-                item.id === itemId
-                  ? {
-                      ...item,
-                      is_completed: !item.is_completed,
-                      completed_at: !item.is_completed
-                        ? new Date().toISOString()
-                        : null,
-                    }
-                  : item
-              ),
-            }
-          : checklist
-      ),
-    })),
+    set((state) => {
+      const checklist = state.checklists.find((c) => c.id === checklistId)
+      if (!checklist) return state
+
+      const item = checklist.items.find((i) => i.id === itemId)
+      if (!item) return state
+
+      const newCompletedState = !item.is_completed
+      const completedAt = newCompletedState ? new Date().toISOString() : null
+
+      // Helper to get all descendant IDs recursively
+      const getAllDescendantIds = (parentId: string): string[] => {
+        const children = checklist.items.filter((i) => i.parent_id === parentId)
+        const descendantIds: string[] = []
+        children.forEach((child) => {
+          descendantIds.push(child.id)
+          descendantIds.push(...getAllDescendantIds(child.id))
+        })
+        return descendantIds
+      }
+
+      // If marking as completed, also mark all children
+      const idsToToggle = newCompletedState
+        ? [itemId, ...getAllDescendantIds(itemId)]
+        : [itemId]
+
+      return {
+        checklists: state.checklists.map((c) =>
+          c.id === checklistId
+            ? {
+                ...c,
+                items: c.items.map((i) =>
+                  idsToToggle.includes(i.id)
+                    ? {
+                        ...i,
+                        is_completed: newCompletedState,
+                        completed_at: completedAt,
+                      }
+                    : i
+                ),
+              }
+            : c
+        ),
+      }
+    }),
 
   addItem: (checklistId, item) =>
     set((state) => ({

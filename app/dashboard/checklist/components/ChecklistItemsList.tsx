@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   DndContext,
@@ -10,6 +10,10 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragStartEvent,
+  DragOverEvent,
+  DragOverlay,
+  MeasuringStrategy,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -40,7 +44,8 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import { ChecklistItemRow } from './ChecklistItemRow'
-import type { UserChecklist, ChecklistItem as ChecklistItemType, ChecklistCategory, ChecklistProgress } from '@/types/checklist'
+import { DragOverlayItem } from './DragOverlayItem'
+import type { UserChecklist, ChecklistItem as ChecklistItemType, ChecklistCategory, ChecklistProgress, NestedChecklistItem } from '@/types/checklist'
 import { colorClasses, organizeItemsHierarchy } from '@/types/checklist'
 
 const categoryIconMap: Record<ChecklistCategory, React.ComponentType<{ className?: string }>> = {
@@ -80,13 +85,16 @@ export function ChecklistItemsList({
   onReorderItems,
   onClose,
 }: ChecklistItemsListProps) {
+  const [activeId, setActiveId] = useState<string | null>(null)
+  const [overId, setOverId] = useState<string | null>(null)
+  const [nestMode, setNestMode] = useState(false) // true when hovering over center of an item
   const colors = colorClasses[checklist.color] || colorClasses.blue
   const IconComponent = categoryIconMap[checklist.category] || ListTodo
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
-        distance: 8,
+        distance: 5,
       },
     }),
     useSensor(KeyboardSensor, {
@@ -100,16 +108,111 @@ export function ChecklistItemsList({
   // Get all item IDs for drag and drop (flat list)
   const itemIds = useMemo(() => checklist.items.map((item) => item.id), [checklist.items])
 
+  // Find the active item for the drag overlay
+  const activeItem = useMemo(() => {
+    if (!activeId) return null
+    const findItem = (items: NestedChecklistItem[]): NestedChecklistItem | null => {
+      for (const item of items) {
+        if (item.id === activeId) return item
+        if (item.subItems.length > 0) {
+          const found = findItem(item.subItems)
+          if (found) return found
+        }
+      }
+      return null
+    }
+    return findItem(nestedItems)
+  }, [activeId, nestedItems])
+
+  const handleDragStart = (event: DragStartEvent) => {
+    setActiveId(event.active.id as string)
+  }
+
+  const handleDragOver = (event: DragOverEvent) => {
+    const { over, active } = event
+
+    if (!over || over.id === active.id) {
+      setOverId(null)
+      setNestMode(false)
+      return
+    }
+
+    setOverId(over.id as string)
+
+    // Determine if we should nest based on horizontal position
+    // If cursor is indented (to the right), enable nest mode
+    if (event.delta && over.rect) {
+      const overRect = over.rect
+      const cursorX = overRect.left + event.delta.x
+      const nestThreshold = overRect.left + 50 // 50px from left edge triggers nesting
+      setNestMode(cursorX > nestThreshold)
+    }
+  }
+
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
+    const wasNestMode = nestMode
+    const targetId = overId
 
-    if (over && active.id !== over.id) {
+    setActiveId(null)
+    setOverId(null)
+    setNestMode(false)
+
+    if (!over || active.id === over.id) return
+
+    const draggedItem = checklist.items.find((item) => item.id === active.id)
+    const targetItem = checklist.items.find((item) => item.id === over.id)
+
+    if (!draggedItem || !targetItem) return
+
+    // Prevent nesting an item under itself or its descendants
+    const isDescendant = (parentId: string | null, childId: string): boolean => {
+      if (!parentId) return false
+      if (parentId === childId) return true
+      const parent = checklist.items.find(i => i.id === parentId)
+      return parent ? isDescendant(parent.parent_id, childId) : false
+    }
+
+    if (wasNestMode && targetId) {
+      // Nesting mode: make the dragged item a child of the target item
+      // Don't allow nesting under own descendants
+      if (isDescendant(targetItem.id, draggedItem.id)) return
+
+      const newItems = checklist.items.map((item) => {
+        if (item.id === draggedItem.id) {
+          return { ...item, parent_id: targetItem.id }
+        }
+        return item
+      })
+      onReorderItems(newItems)
+    } else {
+      // Reorder mode: move items in the same level
       const oldIndex = checklist.items.findIndex((item) => item.id === active.id)
       const newIndex = checklist.items.findIndex((item) => item.id === over.id)
 
-      const newItems = arrayMove(checklist.items, oldIndex, newIndex)
+      // If moving to a different parent level, update parent_id
+      const newParentId = targetItem.parent_id
+
+      let newItems = checklist.items.map((item) => {
+        if (item.id === draggedItem.id) {
+          return { ...item, parent_id: newParentId }
+        }
+        return item
+      })
+
+      // Then reorder
+      const updatedOldIndex = newItems.findIndex((item) => item.id === active.id)
+      const updatedNewIndex = newItems.findIndex((item) => item.id === over.id)
+      newItems = arrayMove(newItems, updatedOldIndex, updatedNewIndex)
+
       onReorderItems(newItems)
     }
+  }
+
+  const handleDragCancel = () => {
+    setActiveId(null)
+    setOverId(null)
+    setNestMode(false)
   }
 
   // Separate root-level items by completion status
@@ -189,7 +292,15 @@ export function ChecklistItemsList({
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
+            onDragStart={handleDragStart}
+            onDragOver={handleDragOver}
             onDragEnd={handleDragEnd}
+            onDragCancel={handleDragCancel}
+            measuring={{
+              droppable: {
+                strategy: MeasuringStrategy.Always,
+              },
+            }}
           >
             <SortableContext
               items={itemIds}
@@ -206,6 +317,10 @@ export function ChecklistItemsList({
                       onEdit={onEditItem}
                       onDelete={onDeleteItem}
                       onAddSubItem={(parentId) => onAddItem(parentId)}
+                      isDragging={activeId === item.id}
+                      isNestTarget={overId === item.id && nestMode}
+                      overId={overId}
+                      nestMode={nestMode}
                     />
                   ))}
                 </AnimatePresence>
@@ -229,6 +344,10 @@ export function ChecklistItemsList({
                           onEdit={onEditItem}
                           onDelete={onDeleteItem}
                           onAddSubItem={(parentId) => onAddItem(parentId)}
+                          isDragging={activeId === item.id}
+                          isNestTarget={overId === item.id && nestMode}
+                          overId={overId}
+                          nestMode={nestMode}
                         />
                       ))}
                     </AnimatePresence>
@@ -236,6 +355,14 @@ export function ChecklistItemsList({
                 )}
               </div>
             </SortableContext>
+
+            {/* Drag Overlay - the floating item that follows cursor */}
+            <DragOverlay dropAnimation={{
+              duration: 200,
+              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+            }}>
+              {activeItem ? <DragOverlayItem item={activeItem} /> : null}
+            </DragOverlay>
           </DndContext>
         )}
       </div>

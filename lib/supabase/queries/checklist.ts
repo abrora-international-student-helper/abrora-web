@@ -297,6 +297,24 @@ export async function toggleItem(itemId: string, isCompleted: boolean): Promise<
   return data
 }
 
+export async function toggleItems(itemIds: string[], isCompleted: boolean): Promise<void> {
+  const supabase = createClient()
+
+  const { error } = await supabase
+    .from('checklist_items')
+    .update({
+      is_completed: isCompleted,
+      completed_at: isCompleted ? new Date().toISOString() : null,
+      updated_at: new Date().toISOString(),
+    })
+    .in('id', itemIds)
+
+  if (error) {
+    console.error('Error toggling items:', error)
+    throw error
+  }
+}
+
 export async function reorderItems(
   items: { id: string; sort_order: number }[]
 ): Promise<void> {

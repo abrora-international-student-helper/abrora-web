@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
 import type { ChecklistItem as ChecklistItemType, PriorityLevel, NestedChecklistItem } from '@/types/checklist'
+import { getNestedItemsCount } from '@/types/checklist'
 
 interface ChecklistItemRowProps {
   item: NestedChecklistItem
@@ -29,7 +30,10 @@ interface ChecklistItemRowProps {
   onDelete: (itemId: string) => void
   onAddSubItem: (parentId: string) => void
   isDragging?: boolean
+  isNestTarget?: boolean
   depth?: number
+  overId?: string | null
+  nestMode?: boolean
 }
 
 const priorityDots: Record<PriorityLevel, string> = {
@@ -46,7 +50,10 @@ export function ChecklistItemRow({
   onDelete,
   onAddSubItem,
   isDragging = false,
+  isNestTarget = false,
   depth = 0,
+  overId = null,
+  nestMode = false,
 }: ChecklistItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const hasSubItems = item.subItems && item.subItems.length > 0
@@ -80,9 +87,11 @@ export function ChecklistItemRow({
     }
   }
 
-  // Calculate sub-item completion
-  const completedSubItems = item.subItems?.filter(sub => sub.is_completed).length || 0
-  const totalSubItems = item.subItems?.length || 0
+  // Calculate sub-item completion (including all nested descendants)
+  const nestedCounts = hasSubItems ? getNestedItemsCount(item) : { total: 1, completed: item.is_completed ? 1 : 0 }
+  // Subtract self from counts for display
+  const totalSubItems = nestedCounts.total - 1
+  const completedSubItems = nestedCounts.completed - (item.is_completed ? 1 : 0)
 
   return (
     <div>
@@ -92,10 +101,16 @@ export function ChecklistItemRow({
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: isDragging ? 0.5 : 1, x: 0 }}
         exit={{ opacity: 0, x: -10 }}
-        className={`group flex items-center gap-2 py-3 px-2 -mx-2 rounded-xl transition-colors ${
-          isDragging ? 'bg-blue-50 shadow-lg ring-2 ring-blue-500' : 'hover:bg-gray-50'
+        className={`group flex items-center gap-2 -mx-2 rounded-xl transition-all duration-150 ${
+          depth >= 2 ? 'py-2 px-2' : 'py-3 px-2'
+        } ${
+          isDragging
+            ? 'bg-blue-50 shadow-lg ring-2 ring-blue-500'
+            : isNestTarget
+              ? 'bg-green-50 ring-2 ring-green-400 ring-dashed'
+              : 'hover:bg-gray-50'
         }`}
-        style={{ ...style, paddingLeft: `${depth * 24 + 8}px` }}
+        style={{ ...style, paddingLeft: `${depth * 20 + 8}px` }}
       >
         {/* Expand/Collapse for items with sub-items */}
         {hasSubItems ? (
@@ -107,11 +122,11 @@ export function ChecklistItemRow({
               animate={{ rotate: isExpanded ? 90 : 0 }}
               transition={{ duration: 0.2 }}
             >
-              <ChevronRight className="h-4 w-4" />
+              <ChevronRight className={depth >= 2 ? 'h-3 w-3' : 'h-4 w-4'} />
             </motion.div>
           </button>
         ) : (
-          <div className="w-5" /> // Spacer for alignment
+          <div className={depth >= 2 ? 'w-4' : 'w-5'} /> // Spacer for alignment
         )}
 
         {/* Drag Handle */}
@@ -123,13 +138,15 @@ export function ChecklistItemRow({
           <GripVertical className="h-4 w-4" />
         </button>
 
-        {/* iOS-style circular checkbox */}
+        {/* Circular checkbox - smaller at deeper levels */}
         <button
           onClick={() => onToggle(item.id)}
           className="flex-shrink-0 focus:outline-none"
         >
           <div
-            className={`w-6 h-6 rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+            className={`rounded-full border-2 flex items-center justify-center transition-all duration-200 ${
+              depth >= 2 ? 'w-5 h-5' : 'w-6 h-6'
+            } ${
               item.is_completed
                 ? 'bg-blue-500 border-blue-500'
                 : 'border-gray-300 hover:border-gray-400'
@@ -140,7 +157,7 @@ export function ChecklistItemRow({
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
                 transition={{ type: 'spring', stiffness: 500, damping: 30 }}
-                className="w-3.5 h-3.5 text-white"
+                className={depth >= 2 ? 'w-3 h-3 text-white' : 'w-3.5 h-3.5 text-white'}
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -156,7 +173,9 @@ export function ChecklistItemRow({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span
-              className={`text-sm transition-all duration-200 ${
+              className={`transition-all duration-200 ${
+                depth >= 2 ? 'text-xs' : 'text-sm'
+              } ${
                 item.is_completed
                   ? 'text-gray-400 line-through'
                   : 'text-gray-900'
@@ -166,15 +185,19 @@ export function ChecklistItemRow({
             </span>
 
             {/* Sub-item count badge */}
-            {hasSubItems && (
-              <span className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full">
+            {hasSubItems && totalSubItems > 0 && (
+              <span className={`text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full ${
+                depth >= 2 ? 'text-[10px]' : 'text-xs'
+              }`}>
                 {completedSubItems}/{totalSubItems}
               </span>
             )}
           </div>
 
           {item.description && !item.is_completed && (
-            <p className="text-xs text-gray-500 mt-0.5 truncate">
+            <p className={`text-gray-500 mt-0.5 truncate ${
+              depth >= 2 ? 'text-[10px]' : 'text-xs'
+            }`}>
               {item.description}
             </p>
           )}
@@ -232,16 +255,19 @@ export function ChecklistItemRow({
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="border-l-2 border-gray-100 ml-5">
+            <div className={`ml-5 ${depth < 3 ? 'border-l-2 border-gray-100' : 'border-l border-gray-50'}`}>
               {item.subItems.map((subItem) => (
                 <ChecklistItemRow
                   key={subItem.id}
-                  item={{ ...subItem, subItems: [] }}
+                  item={subItem}
                   onToggle={onToggle}
                   onEdit={onEdit}
                   onDelete={onDelete}
                   onAddSubItem={onAddSubItem}
                   depth={depth + 1}
+                  overId={overId}
+                  nestMode={nestMode}
+                  isNestTarget={overId === subItem.id && nestMode}
                 />
               ))}
             </div>

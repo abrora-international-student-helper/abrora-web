@@ -147,37 +147,63 @@ export interface ChecklistProgress {
   percentage: number
 }
 
-// Nested item type for UI rendering
+// Nested item type for UI rendering (supports unlimited depth)
 export interface NestedChecklistItem extends ChecklistItem {
-  subItems: ChecklistItem[]
+  subItems: NestedChecklistItem[]
+  depth: number
 }
 
-// Helper function to organize flat items into nested structure
+// Helper function to organize flat items into nested structure (unlimited depth)
 export function organizeItemsHierarchy(items: ChecklistItem[]): NestedChecklistItem[] {
   const itemMap = new Map<string, NestedChecklistItem>()
   const rootItems: NestedChecklistItem[] = []
 
   // First pass: create map with empty subItems arrays
   items.forEach(item => {
-    itemMap.set(item.id, { ...item, subItems: [] })
+    itemMap.set(item.id, { ...item, subItems: [], depth: 0 })
   })
 
   // Second pass: organize into hierarchy
   items.forEach(item => {
     const nestedItem = itemMap.get(item.id)!
     if (item.parent_id && itemMap.has(item.parent_id)) {
-      itemMap.get(item.parent_id)!.subItems.push(nestedItem)
+      const parent = itemMap.get(item.parent_id)!
+      nestedItem.depth = parent.depth + 1
+      parent.subItems.push(nestedItem)
     } else {
+      nestedItem.depth = 0
       rootItems.push(nestedItem)
     }
   })
 
-  // Sort sub-items by sort_order
-  rootItems.forEach(item => {
-    item.subItems.sort((a, b) => a.sort_order - b.sort_order)
+  // Recursive function to sort sub-items and calculate depths
+  const sortAndSetDepths = (items: NestedChecklistItem[], depth: number = 0) => {
+    items.sort((a, b) => a.sort_order - b.sort_order)
+    items.forEach(item => {
+      item.depth = depth
+      if (item.subItems.length > 0) {
+        sortAndSetDepths(item.subItems, depth + 1)
+      }
+    })
+  }
+
+  sortAndSetDepths(rootItems, 0)
+
+  return rootItems
+}
+
+// Get all nested items count (including all descendants)
+export function getNestedItemsCount(item: NestedChecklistItem): { total: number; completed: number } {
+  let total = 1
+  let completed = item.is_completed ? 1 : 0
+
+  item.subItems.forEach(subItem => {
+    const subCounts = getNestedItemsCount(subItem)
+    total += subCounts.total
+    completed += subCounts.completed
   })
 
-  return rootItems.sort((a, b) => a.sort_order - b.sort_order)
+  return { total, completed }
 }
 
 // Color mapping for UI

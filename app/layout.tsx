@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "./components/Nav";
-import Footer from "./components/common/footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,6 +15,10 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Abrora",
   description: "Helping hand for international students",
+  icons: {
+    icon: "/logo/app-icon.png",
+    apple: "/logo/app-icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -29,11 +31,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <Navbar />
-        <main className="min-h-screen">
-          {children}
-        </main>
-        <Footer />
+        {children}
       </body>
     </html>
   );

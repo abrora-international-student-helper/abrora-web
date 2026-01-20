@@ -12,6 +12,7 @@ import {
   updateItem as updateItemApi,
   deleteItem as deleteItemApi,
   toggleItem as toggleItemApi,
+  toggleItems as toggleItemsApi,
   reorderItems as reorderItemsApi,
   copyTemplateToUser,
 } from '@/lib/supabase/queries/checklist'
@@ -141,19 +142,42 @@ export function useChecklists() {
     [store.checklists]
   )
 
-  // Toggle item with optimistic update
+  // Toggle item with optimistic update (includes children when completing)
   const handleToggleItem = useCallback(
     async (checklistId: string, itemId: string) => {
       const checklist = store.checklists.find((c) => c.id === checklistId)
       const item = checklist?.items.find((i) => i.id === itemId)
 
-      if (!item) return
+      if (!item || !checklist) return
 
-      // Optimistic update
+      const newCompletedState = !item.is_completed
+
+      // Helper to get all descendant IDs recursively
+      const getAllDescendantIds = (parentId: string): string[] => {
+        const children = checklist.items.filter((i) => i.parent_id === parentId)
+        const descendantIds: string[] = []
+        children.forEach((child) => {
+          descendantIds.push(child.id)
+          descendantIds.push(...getAllDescendantIds(child.id))
+        })
+        return descendantIds
+      }
+
+      // If marking as completed, also mark all children
+      const idsToToggle = newCompletedState
+        ? [itemId, ...getAllDescendantIds(itemId)]
+        : [itemId]
+
+      // Optimistic update (store handles the cascading logic)
       store.toggleItem(checklistId, itemId)
 
       try {
-        await toggleItemApi(itemId, !item.is_completed)
+        // Use batch toggle API for multiple items
+        if (idsToToggle.length > 1) {
+          await toggleItemsApi(idsToToggle, newCompletedState)
+        } else {
+          await toggleItemApi(itemId, newCompletedState)
+        }
       } catch (error) {
         // Rollback on error
         store.toggleItem(checklistId, itemId)

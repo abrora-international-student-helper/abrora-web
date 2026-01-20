@@ -6,6 +6,8 @@ import FeaturesSection from "./components/Homepage/features";
 import VideoDemoSection from "./components/Homepage/video-demo";
 import ContributorsPage from "./components/Homepage/contributers";
 import TestimonialsPage from "./components/Homepage/testimonials";
+import Navbar from "./components/Nav";
+import Footer from "./components/common/footer";
 
 export default function HomePage() {
   return (
@@ -17,6 +19,7 @@ export default function HomePage() {
         <div className="pointer-events-none absolute -top-10 -left-24 h-[380px] w-[380px] rounded-full bg-secondary-muted/40 blur-3xl" />
         <div className="pointer-events-none absolute top-40 -right-24 h-[420px] w-[420px] rounded-full bg-cyan-200/40 blur-3xl" />
 
+        <Navbar />
         <HeroSection />
       </section>
 
@@ -39,6 +42,9 @@ export default function HomePage() {
       <section className="min-h-screen">
         <TestimonialsPage />
       </section>
+
+      {/* Footer */}
+      <Footer />
     </div>
   );
 }
