@@ -5,212 +5,175 @@ import React, { useState } from 'react'
 export default function MentalHealthPage() {
   const [mood, setMood] = useState<string | null>(null);
 
+  const challenges = [
+    {
+      title: 'The Reality of Culture Shock',
+      icon: '🌏',
+      desc: 'Moving to a new country requires your brain to process thousands of new data points daily—from accents and social etiquette to different grocery systems. If you feel irritable, deeply exhausted, or overwhelmed by simple tasks, it is not a sign of failure. It is a biological sign that your cognitive "processor" is working overtime to adapt to your new environment. This friction is a necessary stage of growth.',
+      tag: 'Cognitive Load'
+    },
+    {
+      title: 'Navigating Homesickness',
+      icon: '🏠',
+      desc: 'Homesickness is often misunderstood as a sign that you aren’t enjoying your new life. In reality, it is a healthy expression of your values and the strength of your roots. It is medically normal to experience a sense of grief for the familiar while simultaneously feeling excited about your future. Acknowledging this duality allows you to honor your past without letting it hinder your present progress.',
+      tag: 'Emotional Health'
+    },
+    {
+      title: 'Managing Social Transition',
+      icon: '🤝',
+      desc: 'Building a genuine community in a foreign country is a slow, iterative process that cannot be rushed. Many students feel isolated because they compare their "internal loneliness" with the "external highlights" of others. Understand that deep belonging is built through micro-connections—a brief conversation after a lecture or a shared meal. These small moments are the essential foundations of your future support network.',
+      tag: 'Social Belonging'
+    }
+  ];
+
   return (
-    <div className="min-h-screen relative overflow-hidden bg-[#F9F9F7] text-[#2D312E] py-12 px-6 lg:px-24">
+    <div className="min-h-screen relative overflow-hidden bg-[#F8FAFC] text-[#1E293B] py-20 px-8 lg:px-24 font-sans">
       
-      {/* Mesh Gradient Background Elements */}
-      <div className="absolute top-[-5%] left-[-10%] w-[60%] h-[40%] bg-[#E8F0EE] rounded-full blur-[120px] opacity-70" />
-      <div className="absolute bottom-[5%] right-[-5%] w-[45%] h-[50%] bg-[#E3E9F2] rounded-full blur-[100px] opacity-60" />
+      {/* --- Enhanced Professional Blue Color Grading --- */}
+      <div className="absolute top-[-15%] left-[-10%] w-[70%] h-[60%] bg-[#E0F2FE] rounded-full blur-[160px] opacity-70" />
+      <div className="absolute bottom-[-10%] right-[-5%] w-[55%] h-[65%] bg-[#DBEAFE] rounded-full blur-[140px] opacity-60" />
+      <div className="absolute top-[20%] right-[10%] w-[30%] h-[30%] bg-[#F0FDFA] rounded-full blur-[100px] opacity-50" />
 
       <div className="max-w-7xl mx-auto relative z-10">
         
-        {/* Hero & Positive Messaging */}
-        <header className="mb-12 text-center md:text-left">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100/50 border border-emerald-200 text-emerald-800 text-xs font-bold uppercase tracking-widest mb-6 backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
-            </span>
-            You are not alone
+        {/* Header: Executive Editorial Style */}
+        <header className="mb-24">
+          <div className="inline-flex items-center gap-3 px-5 py-2 rounded-full bg-[#0F172A] text-white text-[11px] font-bold uppercase tracking-[0.25em] mb-10 shadow-2xl">
+            <span className="w-2 h-2 rounded-full bg-blue-400 animate-pulse" />
+            Strategic Wellness Protocol
           </div>
-          <h1 className="text-5xl md:text-6xl font-light tracking-tight mb-4 leading-tight">
-            Wellness designed for <br />
-            <span className="font-semibold text-emerald-900 italic text-4xl md:text-6xl">your global journey.</span>
+          <h1 className="text-7xl md:text-9xl font-light tracking-tighter mb-8 leading-[0.85] text-slate-900">
+            Global <br />
+            <span className="font-bold text-blue-900 italic">Resilience.</span>
           </h1>
-          <p className="text-lg text-gray-500 max-w-2xl leading-relaxed">
-            Transitioning countries is a brave step. Whether you're feeling homesick or navigating academic pressure, YoursTruely is your companion.
+          <p className="text-2xl text-slate-500 max-w-3xl leading-relaxed font-light">
+            Transitioning across borders is a profound psychological milestone. YoursTruely provides the professional scaffolding and clinical insights needed to navigate your international journey with clarity and strength.
           </p>
         </header>
 
-        {/* 1. Quick Support & Emergency Help */}
-        <div className="mb-12 p-8 bg-red-50/40 border border-red-100 rounded-[2.5rem] backdrop-blur-md flex flex-col md:flex-row items-center justify-between gap-8 shadow-sm">
-          <div>
-            <h2 className="text-xl font-bold text-red-800 flex items-center gap-2 mb-2">
-              🚨 In crisis right now?
-            </h2>
-            <p className="text-red-700/70 text-sm max-w-md italic">Immediate support is available 24/7. Your safety and well-being are the absolute priority.</p>
+        {/* --- The Validation Tier: In-Depth Descriptions --- */}
+        <section className="mb-32">
+          <div className="flex items-center gap-6 mb-16">
+            <h3 className="text-[11px] font-black text-blue-900/40 uppercase tracking-[0.4em] whitespace-nowrap">The Psychology of Transition</h3>
+            <div className="h-[1px] w-full bg-blue-100" />
           </div>
-          <div className="flex flex-wrap gap-3">
-            <button className="bg-red-600 text-white px-8 py-3.5 rounded-full font-bold hover:bg-red-700 transition-all shadow-lg shadow-red-200/50">
-              Get Help Now
-            </button>
-            <button className="bg-white border border-red-200 text-red-600 px-8 py-3.5 rounded-full font-medium hover:bg-red-50 transition-all">
-              Crisis Helplines
-            </button>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Main Content Area */}
-          <div className="lg:col-span-2 space-y-8">
-            
-            {/* 3. Quick Coping Tools */}
-            <section className="bg-white/60 backdrop-blur-xl border border-white/80 rounded-[2.5rem] p-8 shadow-sm">
-              <h3 className="text-2xl font-semibold mb-6 flex items-center gap-2">
-                ⚡ Fast Relief Tools
-              </h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <button className="p-6 bg-[#F0F4F2] rounded-2xl text-left hover:bg-[#E2EAE6] transition-all group">
-                  <span className="block text-3xl mb-3">🫁</span>
-                  <p className="font-bold text-gray-800">4-7-8 Breathing</p>
-                  <p className="text-xs text-gray-500 mt-1">1–3 minutes to reset your nervous system.</p>
-                </button>
-                <button className="p-6 bg-[#F0F4F2] rounded-2xl text-left hover:bg-[#E2EAE6] transition-all group">
-                  <span className="block text-3xl mb-3">🧘</span>
-                  <p className="font-bold text-gray-800">5-4-3-2-1 Grounding</p>
-                  <p className="text-xs text-gray-500 mt-1">Quickly reconnect with the present moment.</p>
-                </button>
-              </div>
-            </section>
-
-            {/* 2 & 6. Common Challenges & Social Adjustment */}
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="bg-emerald-900 text-white rounded-[2.5rem] p-8 shadow-xl">
-                <h3 className="text-xl font-bold mb-6 tracking-tight">Normalizing the Move</h3>
-                <ul className="space-y-4 text-emerald-100/80 text-sm">
-                  <li className="flex items-start gap-3">
-                    <span className="text-emerald-400">●</span>
-                    <p><strong>Culture Shock:</strong> Feeling frustrated or tired is a sign you are adapting.</p>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-emerald-400">●</span>
-                    <p><strong>Homesickness:</strong> It's okay to miss home; it shows you value your roots.</p>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <span className="text-emerald-400">●</span>
-                    <p><strong>Social Isolation:</strong> Building a new tribe takes time. Celebrate small connections.</p>
-                  </li>
-                </ul>
-              </div>
-
-              {/* 5. Managing Academic Stress */}
-              <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-sm flex flex-col justify-between">
-                <div>
-                  <h3 className="text-xl font-bold mb-2 text-gray-800">Academic Pressure</h3>
-                  <p className="text-sm text-gray-500 mb-6 leading-relaxed">Exams and deadlines shouldn't cost you your peace.</p>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+            {challenges.map((item, idx) => (
+              <div key={idx} className="group bg-white/60 backdrop-blur-2xl border border-white p-12 rounded-[4rem] hover:bg-white hover:shadow-[0_32px_64px_-12px_rgba(15,23,42,0.1)] transition-all duration-700">
+                <div className="flex justify-between items-start mb-12">
+                  <div className="text-6xl grayscale group-hover:grayscale-0 transition-all duration-500">{item.icon}</div>
+                  <span className="text-[10px] font-black text-blue-600 bg-blue-50 px-4 py-1.5 rounded-full border border-blue-100 uppercase tracking-widest">
+                    {item.tag}
+                  </span>
                 </div>
-                <div className="space-y-4">
-                  <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
-                    <p className="text-xs font-bold text-blue-700 uppercase tracking-widest mb-1">Study-Break Balance</p>
-                    <p className="text-sm text-blue-900">Try the 50/10 Rule: 50 min study, 10 min movement.</p>
-                  </div>
-                  <button className="w-full py-3 bg-gray-50 hover:bg-gray-100 rounded-xl text-xs font-bold text-gray-600 transition-all uppercase tracking-widest">
-                    Exam Anxiety Tips
-                  </button>
-                </div>
-              </div>
-            </section>
-
-            {/* 7. Seeking Professional Help */}
-            <section className="bg-[#E7EBE8] rounded-[3rem] p-10 flex flex-col md:flex-row gap-10 items-center border border-white/50">
-              <div className="flex-1">
-                <h3 className="text-2xl font-bold mb-4 text-gray-900">Demystifying Counseling</h3>
-                <p className="text-gray-600 text-sm leading-relaxed mb-6 italic">
-                  "Counseling isn't for the broken; it's for the brave." Most campus services are <strong>confidential, free,</strong> and culturally sensitive.
+                <h4 className="text-3xl font-bold mb-6 text-slate-900 tracking-tight">{item.title}</h4>
+                <p className="text-[15px] text-slate-600 leading-[1.8] font-medium opacity-90">
+                  {item.desc}
                 </p>
-                <div className="flex flex-wrap gap-4">
-                  <button className="text-emerald-900 font-bold border-b-2 border-emerald-900 pb-1 hover:text-emerald-700 transition-all text-sm">
-                    How to book on campus
-                  </button>
-                  <button className="text-gray-500 font-bold border-b-2 border-gray-300 pb-1 hover:text-gray-700 transition-all text-sm">
-                    Online therapy options
-                  </button>
-                </div>
               </div>
-              <div className="hidden md:flex w-40 h-40 bg-white/40 backdrop-blur-md rounded-full items-center justify-center text-5xl shadow-inner">
-                🌿
-              </div>
-            </section>
+            ))}
           </div>
+        </section>
 
-          {/* Sidebar Area */}
-          <div className="space-y-8">
+        {/* --- Coping Strategies: Deep Explanations --- */}
+        <section className="mb-32 grid lg:grid-cols-2 gap-20 items-start">
+          <div>
+            <h3 className="text-[11px] font-black text-blue-900/40 uppercase tracking-[0.4em] mb-8">Adaptive Strategies</h3>
+            <h2 className="text-5xl font-bold mb-10 tracking-tight text-slate-900">How to Navigate Change</h2>
             
-            {/* 8. Self-Assessment & Mood Check-in */}
-            <div className="bg-white rounded-[2.5rem] p-8 border border-gray-100 shadow-xl shadow-gray-200/50">
-              <h3 className="text-lg font-bold mb-6 text-center text-gray-800">Daily Mood Check-in</h3>
-              <div className="flex justify-between gap-2 px-2">
-                {['😔', '😐', '😊', '🤩'].map((emoji) => (
-                  <button 
-                    key={emoji}
-                    onClick={() => setMood(emoji)}
-                    className={`text-3xl p-3 rounded-2xl transition-all duration-300 ${mood === emoji ? 'bg-emerald-100 scale-110 shadow-sm' : 'hover:bg-gray-50 opacity-60 hover:opacity-100'}`}
-                  >
-                    {emoji}
-                  </button>
-                ))}
+            <div className="space-y-10">
+              <div className="relative pl-12 border-l-2 border-blue-100">
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-blue-600 shadow-[0_0_15px_rgba(37,99,235,0.4)]" />
+                <h4 className="text-xl font-bold text-slate-900 mb-3">Develop "Anchor Routines"</h4>
+                <p className="text-slate-500 leading-relaxed text-sm">
+                  In a world where everything feels new, your brain craves predictability to lower cortisol levels. Establish a non-negotiable "anchor"—like visiting the same park every Sunday or a specific morning coffee ritual. These small repetitions send a biological signal to your nervous system that you are safe and in control.
+                </p>
               </div>
-              {mood && (
-                <div className="mt-6 p-4 bg-emerald-50 rounded-2xl border border-emerald-100 animate-in fade-in slide-in-from-top-2">
-                  <p className="text-center text-xs text-emerald-800 font-medium">
-                    Every feeling is a visitor. Thanks for acknowledging yourself today.
-                  </p>
-                </div>
-              )}
-            </div>
 
-            {/* 4. Daily Wellness Habits */}
-            <div className="bg-[#F4F4F9] rounded-[3rem] p-8 border border-white shadow-sm">
-              <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2 px-2">
-                <span className="w-2 h-2 bg-blue-500 rounded-full"></span>
-                Daily Wellness
-              </h3>
-              <ul className="space-y-4">
-                <li className="group flex gap-4 items-center bg-white p-4 rounded-[1.5rem] shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <span className="text-2xl transform group-hover:rotate-12 transition-transform">😴</span>
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">Sleep Routine</p>
-                    <p className="text-[10px] text-gray-400 font-medium tracking-tight">Tips for deep rest.</p>
-                  </div>
-                </li>
-                <li className="group flex gap-4 items-center bg-white p-4 rounded-[1.5rem] shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <span className="text-2xl transform group-hover:rotate-12 transition-transform">🚶</span>
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">Movement</p>
-                    <p className="text-[10px] text-gray-400 font-medium tracking-tight">Small walks, big impact.</p>
-                  </div>
-                </li>
-                <li className="group flex gap-4 items-center bg-white p-4 rounded-[1.5rem] shadow-sm hover:shadow-md transition-all cursor-pointer">
-                  <span className="text-2xl transform group-hover:rotate-12 transition-transform">📓</span>
-                  <div>
-                    <p className="text-sm font-bold text-gray-800">Journaling</p>
-                    <p className="text-[10px] text-gray-400 font-medium tracking-tight">Prompts for clarity.</p>
-                  </div>
-                </li>
-              </ul>
-            </div>
+              <div className="relative pl-12 border-l-2 border-blue-100">
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-blue-300" />
+                <h4 className="text-xl font-bold text-slate-900 mb-3">Curate Your Digital Environment</h4>
+                <p className="text-slate-500 leading-relaxed text-sm">
+                  Constant exposure to social media from your home country can create "split-presence," where you aren't fully in your new home nor back in your old one. Try to limit passive scrolling and replace it with intentional, high-quality video calls. This prevents the feeling of missing out and helps you focus on the growth happening right where you are.
+                </p>
+              </div>
 
-            {/* Assessment Tool Teaser */}
-            <div className="p-8 bg-gradient-to-br from-indigo-50 to-blue-50 rounded-[2.5rem] border border-blue-100/50">
-              <h4 className="text-sm font-bold text-indigo-900 mb-2 uppercase tracking-tighter">Wellness Quiz</h4>
-              <p className="text-xs text-indigo-700/70 mb-4 leading-relaxed">Unsure if you should talk to someone? Try our quick screening tool.</p>
-              <button className="w-full py-3 bg-indigo-900 text-white rounded-xl text-xs font-bold hover:bg-black transition-all">
-                Take Assessment
-              </button>
+              <div className="relative pl-12 border-l-2 border-blue-100">
+                <div className="absolute left-[-9px] top-0 w-4 h-4 rounded-full bg-blue-100" />
+                <h4 className="text-xl font-bold text-slate-900 mb-3">Prioritize Somatic Regulation</h4>
+                <p className="text-slate-500 leading-relaxed text-sm">
+                  Stress isn't just in your mind; it’s in your body. Physical movement—especially in nature—is one of the fastest ways to clear the "brain fog" associated with culture shock. A simple 20-minute walk helps your body process the adrenaline that comes with navigating a new city, leaving you calmer and more focused.
+                </p>
+              </div>
             </div>
-
           </div>
-        </div>
 
-        {/* 10. Hope-Focused Footer */}
-        <footer className="mt-24 text-center border-t border-gray-200/40 pt-12">
-          <p className="text-gray-400 text-sm mb-6 italic font-medium">Small wins are still wins. You're exactly where you need to be.</p>
+          {/* Institutional Support: Refined Slate Card */}
+          <div className="sticky top-10 bg-[#0F172A] rounded-[4rem] p-16 text-white shadow-2xl overflow-hidden group">
+             <div className="relative z-10">
+                <h3 className="text-blue-400 text-[11px] font-black uppercase tracking-[0.3em] mb-8">Institutional Resources</h3>
+                <h2 className="text-4xl font-bold mb-8">Free Clinical Counseling</h2>
+                <p className="text-slate-400 leading-relaxed mb-12">
+                  Most international student tuition includes a "Student Wellness Fee." This means professional, high-quality counseling services are already available to you at no additional cost. Utilizing these services is a sign of high emotional intelligence and a strategic step toward ensuring your academic and personal success.
+                </p>
+                
+                <div className="space-y-8">
+                  <div className="flex gap-5">
+                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-blue-600 transition-all duration-500">🛡️</div>
+                    <div>
+                      <h5 className="font-bold text-lg mb-1">Absolute Confidentiality</h5>
+                      <p className="text-sm text-slate-500">Your privacy is legally protected. Records are never shared with your professors, family, or the immigration office (DSO).</p>
+                    </div>
+                  </div>
+                  <div className="flex gap-5">
+                    <div className="w-12 h-12 bg-white/5 rounded-2xl flex items-center justify-center shrink-0 border border-white/10 group-hover:bg-blue-600 transition-all duration-500">🎓</div>
+                    <div>
+                      <h5 className="font-bold text-lg mb-1">Cultural Expertise</h5>
+                      <p className="text-sm text-slate-500">University therapists are specifically trained to support students through the unique pressures of F1/J1 visa regulations and cultural adjustment.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mt-16 p-8 bg-white/5 rounded-3xl border border-white/10 text-center">
+                   <p className="text-xs text-slate-400 mb-4">Search your university website for:</p>
+                   <p className="text-xl font-mono font-bold text-blue-400">"CAPS" or "Student Health"</p>
+                </div>
+             </div>
+             {/* Abstract Background Element */}
+             <div className="absolute top-[-20%] right-[-20%] w-96 h-96 bg-blue-600 rounded-full blur-[160px] opacity-20 group-hover:opacity-40 transition-opacity duration-700" />
+          </div>
+        </section>
+
+        {/* --- Neurological Reset Tools --- */}
+        <section className="bg-white/40 backdrop-blur-2xl border border-white p-16 rounded-[5rem] shadow-sm mb-32">
+          <h3 className="text-2xl font-bold mb-12 text-slate-900">Professional Coping Mechanisms</h3>
+          <div className="grid md:grid-cols-2 gap-10">
+            <div className="p-10 bg-slate-50 rounded-[3rem] border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-500 group">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-blue-100 text-blue-700 text-[10px] font-black uppercase tracking-widest mb-6">Technique: 4-7-8</span>
+              <h4 className="text-2xl font-bold mb-4">Vagus Nerve Reset</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                By extending your exhale longer than your inhale, you activate the "vagus nerve," which signals your brain to exit "fight-or-flight" mode. This is the fastest biological way to stop an anxiety spike.
+              </p>
+            </div>
+            <div className="p-10 bg-slate-50 rounded-[3rem] border border-slate-100 hover:bg-white hover:shadow-2xl transition-all duration-500 group">
+              <span className="inline-block px-4 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-[10px] font-black uppercase tracking-widest mb-6">Technique: Grounding</span>
+              <h4 className="text-2xl font-bold mb-4">Cognitive Re-Anchoring</h4>
+              <p className="text-slate-500 text-sm leading-relaxed">
+                The 5-4-3-2-1 method forces your brain to switch from "internal worrying" to "external observation." By identifying things you can see and feel, you pull your mind back into the present safety of your environment.
+              </p>
+            </div>
+          </div>
+        </section>
+
+        {/* Footer */}
+        <footer className="mt-32 pt-16 border-t border-slate-200/60 flex flex-col md:flex-row justify-between items-center gap-12">
+          <p className="text-slate-400 text-[10px] font-black tracking-[0.5em] uppercase">YoursTruely Strategic Health • 2026</p>
           <button 
             onClick={() => window.location.href = '/dashboard'}
-            className="text-xs font-bold tracking-[0.3em] text-gray-400 hover:text-emerald-900 transition-all uppercase px-4 py-2"
+            className="group flex items-center gap-4 text-xs font-black tracking-[0.2em] text-slate-500 hover:text-blue-900 transition-all uppercase"
           >
-            ← Return to YoursTruely Dashboard
+            <span className="group-hover:-translate-x-2 transition-transform duration-500 text-lg">←</span> Return to Dashboard
           </button>
         </footer>
       </div>
