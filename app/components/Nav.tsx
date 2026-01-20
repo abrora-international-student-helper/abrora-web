@@ -70,12 +70,12 @@ const Navbar = () => {
                     <div className="flex-1 p-8">
                       <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Document Vault</p>
                       <div className="mt-6 grid grid-cols-2 gap-x-10 gap-y-6">
-                        <DropdownItem icon={<Plane className="h-5 w-5" />} title="Passport & Visa" desc="Citizenship, visa stamps, I-94" color="blue" />
-                        <DropdownItem icon={<FileText className="h-5 w-5" />} title="I-20 & SEVIS" desc="Signed I-20, SEVIS payment" color="orange" />
-                        <DropdownItem icon={<GraduationCap className="h-5 w-5" />} title="Acceptance Letters" desc="College admission documents" color="purple" />
-                        <DropdownItem icon={<Landmark className="h-5 w-5" />} title="Financial Docs" desc="Bank statements, drafts, receipts" color="green" />
-                        <DropdownItem icon={<Stethoscope className="h-5 w-5" />} title="Medical Records" desc="Vaccinations, TB test, reports" color="rose" />
-                        <DropdownItem icon={<Shield className="h-5 w-5" />} title="DS-160 & Forms" desc="Visa application confirmations" color="indigo" />
+                        <DropdownItem icon={<Plane className="h-5 w-5" />} title="Passport & Visa" desc="Citizenship, visa stamps, I-94" color="blue" href="/documents" />
+                        <DropdownItem icon={<FileText className="h-5 w-5" />} title="I-20 & SEVIS" desc="Signed I-20, SEVIS payment" color="orange" href="/documents" />
+                        <DropdownItem icon={<GraduationCap className="h-5 w-5" />} title="Acceptance Letters" desc="College admission documents" color="purple" href="/documents" />
+                        <DropdownItem icon={<Landmark className="h-5 w-5" />} title="Financial Docs" desc="Bank statements, drafts, receipts" color="green" href="/documents" />
+                        <DropdownItem icon={<Stethoscope className="h-5 w-5" />} title="Medical Records" desc="Vaccinations, TB test, reports" color="rose" href="/documents" />
+                        <DropdownItem icon={<Shield className="h-5 w-5" />} title="DS-160 & Forms" desc="Visa application confirmations" color="indigo" href="/documents" />
                       </div>
                     </div>
                     <FeaturedCard icon={<Folder className="h-6 w-6" />} tag="Security" title="Keep your docs" highlight="travel-ready" desc="Quick access to all your documents." color="primary" />
@@ -104,27 +104,27 @@ const Navbar = () => {
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Rookie</p>
                           <div className="mt-5 space-y-5">
-                            <DropdownItem icon={<GraduationCap className="h-5 w-5" />} title="College Application" desc="Research, apply, get accepted" color="blue" />
-                            <DropdownItem icon={<Shield className="h-5 w-5" />} title="Visa Process" desc="DS-160, SEVIS, interview" color="orange" />
-                            <DropdownItem icon={<Syringe className="h-5 w-5" />} title="Medical & Vaccines" desc="MMR, TB test, records" color="rose" />
-                            <DropdownItem icon={<ShoppingBag className="h-5 w-5" />} title="Shopping & Flights" desc="What to pack, cheap flights" color="purple" />
+                            <DropdownItem icon={<GraduationCap className="h-5 w-5" />} title="College Application" desc="Research, apply, get accepted" color="blue" href="/rookie" />
+                            <DropdownItem icon={<Shield className="h-5 w-5" />} title="Visa Process" desc="DS-160, SEVIS, interview" color="orange" href="/visa-setup" />
+                            <DropdownItem icon={<Syringe className="h-5 w-5" />} title="Medical & Vaccines" desc="MMR, TB test, records" color="rose" href="/rookie" />
+                            <DropdownItem icon={<ShoppingBag className="h-5 w-5" />} title="Shopping & Flights" desc="What to pack, cheap flights" color="purple" href="/rookie" />
                           </div>
                         </div>
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Life in USA</p>
                           <div className="mt-5 space-y-5">
-                            <DropdownItem icon={<Briefcase className="h-5 w-5" />} title="Work Rules" desc="20 hrs, SSN, CPT/OPT" color="orange" />
-                            <DropdownItem icon={<CreditCard className="h-5 w-5" />} title="Banking & Credit" desc="Accounts, credit building" color="green" href='credit-card'/>
-                            <DropdownItem icon={<HeartPulse className="h-5 w-5" />} title="Healthcare" desc="Insurance, clinics" color="rose" />
-                            <DropdownItem icon={<Car className="h-5 w-5" />} title="Getting a Car" desc="License, insurance, tips" color="blue"  href='/car'/>
+                            <DropdownItem icon={<Briefcase className="h-5 w-5" />} title="Work Rules" desc="20 hrs, SSN, CPT/OPT" color="orange" href="/work" />
+                            <DropdownItem icon={<CreditCard className="h-5 w-5" />} title="Banking & Credit" desc="Accounts, credit building" color="green" href="/credit-card" />
+                            <DropdownItem icon={<HeartPulse className="h-5 w-5" />} title="Healthcare" desc="Insurance, clinics" color="rose" href="/mental-health" />
+                            <DropdownItem icon={<Car className="h-5 w-5" />} title="Getting a Car" desc="License, insurance, tips" color="blue" href="/car" />
                           </div>
                         </div>
                         <div>
                           <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Safety & Career</p>
                           <div className="mt-5 space-y-5">
-                            <DropdownItem icon={<Brain className="h-5 w-5" />} title="Mental Health" desc="Isolation & stress help" color="purple" />
-                            <DropdownItem icon={<AlertTriangle className="h-5 w-5" />} title="Scam Alerts" desc="Common student scams" color="orange" />
-                            <DropdownItem icon={<Briefcase className="h-5 w-5" />} title="Career & Jobs" desc="Resume, H1B path" color="indigo" />
+                            <DropdownItem icon={<Brain className="h-5 w-5" />} title="Mental Health" desc="Isolation & stress help" color="purple" href="/mental-health" />
+                            <DropdownItem icon={<AlertTriangle className="h-5 w-5" />} title="Scam Alerts" desc="Common student scams" color="orange" href="/scam-alerts" />
+                            <DropdownItem icon={<Briefcase className="h-5 w-5" />} title="Career & Jobs" desc="Resume, H1B path" color="indigo" href="/work" />
                           </div>
                         </div>
                       </div>
@@ -154,10 +154,10 @@ const Navbar = () => {
                     <div className="flex-1 p-8">
                       <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Step-by-Step Guides</p>
                       <div className="mt-6 grid grid-cols-2 gap-x-12 gap-y-6">
-                        <DropdownItem icon={<Plane className="h-5 w-5" />} title="First Time to USA" desc="Pre-arrival to first month" color="blue" />
-                        <DropdownItem icon={<Globe className="h-5 w-5" />} title="Going Back & Return" desc="Travel signatures, re-entry" color="orange" />
-                        <DropdownItem icon={<Globe className="h-5 w-5" />} title="USA to Overseas" desc="International travel tips" color="purple" />
-                        <DropdownItem icon={<CheckCircle className="h-5 w-5" />} title="Graduation & OPT" desc="EAD card, job search" color="green" />
+                        <DropdownItem icon={<Plane className="h-5 w-5" />} title="First Time to USA" desc="Pre-arrival to first month" color="blue" href="/checklist" />
+                        <DropdownItem icon={<Globe className="h-5 w-5" />} title="Going Back & Return" desc="Travel signatures, re-entry" color="orange" href="/checklist" />
+                        <DropdownItem icon={<Globe className="h-5 w-5" />} title="USA to Overseas" desc="International travel tips" color="purple" href="/checklist" />
+                        <DropdownItem icon={<CheckCircle className="h-5 w-5" />} title="Graduation & OPT" desc="EAD card, job search" color="green" href="/checklist" />
                       </div>
                     </div>
                     <FeaturedCard icon={<CheckCircle className="h-6 w-6" />} tag="Track" title="Track your" highlight="progress" desc="Save completion." color="orange" small />
@@ -184,10 +184,10 @@ const Navbar = () => {
                     <div className="flex-1 p-8">
                       <p className="text-xs font-semibold uppercase tracking-wider text-gray-400">Stay Informed</p>
                       <div className="mt-6 grid grid-cols-2 gap-x-10 gap-y-6">
-                        <DropdownItem icon={<Flag className="h-5 w-5" />} title="Immigration News" desc="Policy & USCIS updates" color="blue" />
-                        <DropdownItem icon={<Newspaper className="h-5 w-5" />} title="Nepal Updates" desc="Embassy advisories" color="orange" />
-                        <DropdownItem icon={<Bell className="h-5 w-5" />} title="Alerts & Warnings" desc="Safety & scam warnings" color="rose" />
-                        <DropdownItem icon={<Trophy className="h-5 w-5" />} title="Student Success" desc="Achievements & wins" color="green" />
+                        <DropdownItem icon={<Flag className="h-5 w-5" />} title="Immigration News" desc="Policy & USCIS updates" color="blue" href="/news" />
+                        <DropdownItem icon={<Newspaper className="h-5 w-5" />} title="Nepal Updates" desc="Embassy advisories" color="orange" href="/news" />
+                        <DropdownItem icon={<Bell className="h-5 w-5" />} title="Alerts & Warnings" desc="Safety & scam warnings" color="rose" href="/scam-alerts" />
+                        <DropdownItem icon={<Trophy className="h-5 w-5" />} title="Student Success" desc="Achievements & wins" color="green" href="/news" />
                       </div>
                     </div>
                     <FeaturedCard icon={<Newspaper className="h-6 w-6" />} tag="Important" title="OPT Rule" highlight="Changes 2025" desc="New STEM extensions." color="red" />
