@@ -69,7 +69,7 @@ export default function VisaSetupPage() {
         {/* LEFT PANEL: Blue Grading & Summary */}
         <div className="md:w-1/3 bg-gradient-to-br from-[#1E40AF] via-[#1E3A8A] to-[#172554] p-12 text-white flex flex-col">
           <div className="mb-10">
-            <h2 className="text-2xl font-black tracking-tighter italic">YoursTruely</h2>
+            <h2 className="text-2xl font-black tracking-tighter italic">Abrora</h2>
             <p className="text-blue-300 text-[10px] uppercase font-bold tracking-widest mt-1">Visa Intelligence</p>
           </div>
 
