@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState } from 'react'
+import { useMemo, useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   DndContext,
@@ -14,6 +14,8 @@ import {
   DragOverEvent,
   DragOverlay,
   MeasuringStrategy,
+  pointerWithin,
+  rectIntersection,
 } from '@dnd-kit/core'
 import {
   arrayMove,
@@ -43,7 +45,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import { ChecklistItemRow } from './ChecklistItemRow'
+import { ChecklistItemRow, type DropPosition } from './ChecklistItemRow'
 import { DragOverlayItem } from './DragOverlayItem'
 import type { UserChecklist, ChecklistItem as ChecklistItemType, ChecklistCategory, ChecklistProgress, NestedChecklistItem } from '@/types/checklist'
 import { colorClasses, organizeItemsHierarchy } from '@/types/checklist'
@@ -87,7 +89,7 @@ export function ChecklistItemsList({
 }: ChecklistItemsListProps) {
   const [activeId, setActiveId] = useState<string | null>(null)
   const [overId, setOverId] = useState<string | null>(null)
-  const [nestMode, setNestMode] = useState(false) // true when hovering over center of an item
+  const [dropPosition, setDropPosition] = useState<DropPosition>(null)
   const colors = colorClasses[checklist.color] || colorClasses.blue
   const IconComponent = categoryIconMap[checklist.category] || ListTodo
 
@@ -129,34 +131,54 @@ export function ChecklistItemsList({
   }
 
   const handleDragOver = (event: DragOverEvent) => {
-    const { over, active } = event
+    const { over, active, activatorEvent } = event
 
     if (!over || over.id === active.id) {
       setOverId(null)
-      setNestMode(false)
+      setDropPosition(null)
       return
     }
 
     setOverId(over.id as string)
 
-    // Determine if we should nest based on horizontal position
-    // If cursor is indented (to the right), enable nest mode
-    if (event.delta && over.rect) {
+    // Calculate drop position based on cursor position within the target element
+    if (over.rect) {
       const overRect = over.rect
-      const cursorX = overRect.left + event.delta.x
-      const nestThreshold = overRect.left + 50 // 50px from left edge triggers nesting
-      setNestMode(cursorX > nestThreshold)
+      const pointerY = (activatorEvent as PointerEvent)?.clientY ?? 0
+      const offsetY = event.delta?.y ?? 0
+      const currentY = pointerY + offsetY
+
+      const itemHeight = overRect.height
+      const topThird = overRect.top + itemHeight * 0.25
+      const bottomThird = overRect.top + itemHeight * 0.75
+
+      // Also check horizontal position for nesting
+      const pointerX = (activatorEvent as PointerEvent)?.clientX ?? 0
+      const offsetX = event.delta?.x ?? 0
+      const currentX = pointerX + offsetX
+      const nestThreshold = overRect.left + 80 // Indent threshold for nesting
+
+      if (currentX > nestThreshold && currentY > topThird && currentY < bottomThird) {
+        // Middle zone + indented = nest
+        setDropPosition('nest')
+      } else if (currentY < topThird + (itemHeight * 0.25)) {
+        // Top quarter = before
+        setDropPosition('before')
+      } else {
+        // Bottom = after
+        setDropPosition('after')
+      }
     }
   }
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event
-    const wasNestMode = nestMode
+    const currentDropPosition = dropPosition
     const targetId = overId
 
     setActiveId(null)
     setOverId(null)
-    setNestMode(false)
+    setDropPosition(null)
 
     if (!over || active.id === over.id) return
 
@@ -173,7 +195,7 @@ export function ChecklistItemsList({
       return parent ? isDescendant(parent.parent_id, childId) : false
     }
 
-    if (wasNestMode && targetId) {
+    if (currentDropPosition === 'nest' && targetId) {
       // Nesting mode: make the dragged item a child of the target item
       // Don't allow nesting under own descendants
       if (isDescendant(targetItem.id, draggedItem.id)) return
@@ -186,9 +208,18 @@ export function ChecklistItemsList({
       })
       onReorderItems(newItems)
     } else {
-      // Reorder mode: move items in the same level
+      // Reorder mode: move items - before or after target
       const oldIndex = checklist.items.findIndex((item) => item.id === active.id)
-      const newIndex = checklist.items.findIndex((item) => item.id === over.id)
+      let newIndex = checklist.items.findIndex((item) => item.id === over.id)
+
+      // Adjust index based on drop position
+      if (currentDropPosition === 'after' && newIndex > oldIndex) {
+        // No adjustment needed
+      } else if (currentDropPosition === 'before' && newIndex < oldIndex) {
+        // No adjustment needed
+      } else if (currentDropPosition === 'after') {
+        newIndex = newIndex + 1
+      }
 
       // If moving to a different parent level, update parent_id
       const newParentId = targetItem.parent_id
@@ -202,7 +233,7 @@ export function ChecklistItemsList({
 
       // Then reorder
       const updatedOldIndex = newItems.findIndex((item) => item.id === active.id)
-      const updatedNewIndex = newItems.findIndex((item) => item.id === over.id)
+      const updatedNewIndex = Math.min(newIndex, newItems.length - 1)
       newItems = arrayMove(newItems, updatedOldIndex, updatedNewIndex)
 
       onReorderItems(newItems)
@@ -212,7 +243,7 @@ export function ChecklistItemsList({
   const handleDragCancel = () => {
     setActiveId(null)
     setOverId(null)
-    setNestMode(false)
+    setDropPosition(null)
   }
 
   // Separate root-level items by completion status
@@ -306,7 +337,7 @@ export function ChecklistItemsList({
               items={itemIds}
               strategy={verticalListSortingStrategy}
             >
-              <div className="space-y-0">
+              <div className="space-y-1">
                 <AnimatePresence mode="popLayout">
                   {/* Incomplete items first */}
                   {incompleteItems.map((item) => (
@@ -318,9 +349,10 @@ export function ChecklistItemsList({
                       onDelete={onDeleteItem}
                       onAddSubItem={(parentId) => onAddItem(parentId)}
                       isDragging={activeId === item.id}
-                      isNestTarget={overId === item.id && nestMode}
+                      dropPosition={overId === item.id ? dropPosition : null}
+                      globalDropPosition={dropPosition}
                       overId={overId}
-                      nestMode={nestMode}
+                      activeId={activeId}
                     />
                   ))}
                 </AnimatePresence>
@@ -345,9 +377,10 @@ export function ChecklistItemsList({
                           onDelete={onDeleteItem}
                           onAddSubItem={(parentId) => onAddItem(parentId)}
                           isDragging={activeId === item.id}
-                          isNestTarget={overId === item.id && nestMode}
+                          dropPosition={overId === item.id ? dropPosition : null}
+                          globalDropPosition={dropPosition}
                           overId={overId}
-                          nestMode={nestMode}
+                          activeId={activeId}
                         />
                       ))}
                     </AnimatePresence>

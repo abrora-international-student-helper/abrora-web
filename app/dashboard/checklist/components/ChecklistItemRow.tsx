@@ -23,6 +23,8 @@ import {
 import type { ChecklistItem as ChecklistItemType, PriorityLevel, NestedChecklistItem } from '@/types/checklist'
 import { getNestedItemsCount } from '@/types/checklist'
 
+export type DropPosition = 'before' | 'after' | 'nest' | null
+
 interface ChecklistItemRowProps {
   item: NestedChecklistItem
   onToggle: (itemId: string) => void
@@ -30,10 +32,11 @@ interface ChecklistItemRowProps {
   onDelete: (itemId: string) => void
   onAddSubItem: (parentId: string) => void
   isDragging?: boolean
-  isNestTarget?: boolean
+  dropPosition?: DropPosition  // Only set if this item is the target
+  globalDropPosition?: DropPosition  // Always the current global drop position
   depth?: number
   overId?: string | null
-  nestMode?: boolean
+  activeId?: string | null
 }
 
 const priorityDots: Record<PriorityLevel, string> = {
@@ -50,10 +53,11 @@ export function ChecklistItemRow({
   onDelete,
   onAddSubItem,
   isDragging = false,
-  isNestTarget = false,
+  dropPosition = null,
+  globalDropPosition = null,
   depth = 0,
   overId = null,
-  nestMode = false,
+  activeId = null,
 }: ChecklistItemRowProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const hasSubItems = item.subItems && item.subItems.length > 0
@@ -93,21 +97,37 @@ export function ChecklistItemRow({
   const totalSubItems = nestedCounts.total - 1
   const completedSubItems = nestedCounts.completed - (item.is_completed ? 1 : 0)
 
+  const isOver = overId === item.id
+  const showDropBefore = isOver && dropPosition === 'before'
+  const showDropAfter = isOver && dropPosition === 'after'
+  const showNestIndicator = isOver && dropPosition === 'nest'
+
   return (
-    <div>
+    <div className="relative">
+      {/* Drop indicator - before */}
+      {showDropBefore && (
+        <div
+          className="absolute left-0 right-0 -top-0.5 z-10 flex items-center"
+          style={{ marginLeft: `${depth * 20}px` }}
+        >
+          <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow-sm" />
+          <div className="flex-1 h-0.5 bg-blue-500 rounded-full" />
+        </div>
+      )}
+
       <motion.div
         ref={setNodeRef}
         style={style}
         initial={{ opacity: 0, x: -10 }}
-        animate={{ opacity: isDragging ? 0.5 : 1, x: 0 }}
+        animate={{ opacity: isDragging ? 0.3 : 1, x: 0 }}
         exit={{ opacity: 0, x: -10 }}
         className={`group flex items-center gap-2 -mx-2 rounded-xl transition-all duration-150 ${
           depth >= 2 ? 'py-2 px-2' : 'py-3 px-2'
         } ${
           isDragging
-            ? 'bg-blue-50 shadow-lg ring-2 ring-blue-500'
-            : isNestTarget
-              ? 'bg-green-50 ring-2 ring-green-400 ring-dashed'
+            ? 'bg-gray-100 opacity-50'
+            : showNestIndicator
+              ? 'bg-blue-50 ring-2 ring-blue-400 ring-dashed shadow-sm'
               : 'hover:bg-gray-50'
         }`}
         style={{ ...style, paddingLeft: `${depth * 20 + 8}px` }}
@@ -245,6 +265,26 @@ export function ChecklistItemRow({
         </DropdownMenu>
       </motion.div>
 
+      {/* Drop indicator - after (only show if no sub-items or collapsed) */}
+      {showDropAfter && (!hasSubItems || !isExpanded) && (
+        <div
+          className="absolute left-0 right-0 -bottom-0.5 z-10 flex items-center"
+          style={{ marginLeft: `${depth * 20}px` }}
+        >
+          <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow-sm" />
+          <div className="flex-1 h-0.5 bg-blue-500 rounded-full" />
+        </div>
+      )}
+
+      {/* Nest indicator text */}
+      {showNestIndicator && (
+        <div
+          className="absolute right-2 top-1/2 -translate-y-1/2 text-xs font-medium text-blue-600 bg-blue-100 px-2 py-0.5 rounded-full"
+        >
+          Add as sub-task
+        </div>
+      )}
+
       {/* Sub-items */}
       <AnimatePresence>
         {hasSubItems && isExpanded && (
@@ -266,14 +306,27 @@ export function ChecklistItemRow({
                   onAddSubItem={onAddSubItem}
                   depth={depth + 1}
                   overId={overId}
-                  nestMode={nestMode}
-                  isNestTarget={overId === subItem.id && nestMode}
+                  activeId={activeId}
+                  globalDropPosition={globalDropPosition}
+                  dropPosition={overId === subItem.id ? globalDropPosition : null}
+                  isDragging={activeId === subItem.id}
                 />
               ))}
             </div>
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* Drop indicator - after sub-items */}
+      {showDropAfter && hasSubItems && isExpanded && (
+        <div
+          className="absolute left-0 right-0 -bottom-0.5 z-10 flex items-center"
+          style={{ marginLeft: `${depth * 20}px` }}
+        >
+          <div className="w-3 h-3 rounded-full bg-blue-500 border-2 border-white shadow-sm" />
+          <div className="flex-1 h-0.5 bg-blue-500 rounded-full" />
+        </div>
+      )}
     </div>
   )
 }
