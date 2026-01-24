@@ -117,7 +117,6 @@ export function ChecklistItemRow({
 
       <motion.div
         ref={setNodeRef}
-        style={style}
         initial={{ opacity: 0, x: -10 }}
         animate={{ opacity: isDragging ? 0.3 : 1, x: 0 }}
         exit={{ opacity: 0, x: -10 }}

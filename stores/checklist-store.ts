@@ -277,15 +277,11 @@ export const useChecklistStore = create<ChecklistState>((set, get) => ({
     return checklists.filter((checklist) => {
       // Status filter
       if (filter.status !== 'all') {
-        const allCompleted = checklist.items.every((i) => i.is_completed)
+        const allCompleted = checklist.items.length > 0 && checklist.items.every((i) => i.is_completed)
         const hasIncomplete = checklist.items.some((i) => !i.is_completed)
 
         if (filter.status === 'completed' && !allCompleted) return false
-        if (filter.status === 'not_started' && !hasIncomplete) return false
-        if (filter.status === 'in_progress') {
-          const someCompleted = checklist.items.some((i) => i.is_completed)
-          if (!someCompleted || allCompleted) return false
-        }
+        if (filter.status === 'active' && !hasIncomplete) return false
       }
 
       // Category filter

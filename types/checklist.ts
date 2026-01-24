@@ -133,8 +133,10 @@ export interface UpdateItemInput {
 }
 
 // Filter types
+export type FilterStatus = 'all' | 'active' | 'completed'
+
 export interface ChecklistFilter {
-  status: 'all' | ChecklistStatus
+  status: FilterStatus
   priority: PriorityLevel | 'all'
   search: string
   category: ChecklistCategory | 'all'

@@ -7,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu'
-import type { ChecklistFilter, Priority, TemplateCategory } from '@/types/checklist'
+import type { ChecklistFilter, PriorityLevel } from '@/types/checklist'
 
 const statusOptions = [
   { value: 'all', label: 'All' },
@@ -83,7 +83,7 @@ export function FilterBar({ filter, onFilterChange, onExpandAll, onCollapseAll }
             {priorityOptions.map((option) => (
               <DropdownMenuItem
                 key={option.value}
-                onClick={() => onFilterChange({ priority: option.value as Priority | 'all' })}
+                onClick={() => onFilterChange({ priority: option.value as PriorityLevel | 'all' })}
               >
                 {option.label}
               </DropdownMenuItem>
