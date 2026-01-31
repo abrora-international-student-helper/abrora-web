@@ -32,12 +32,9 @@ export function DragOverlayItem({ item }: DragOverlayItemProps) {
   }
 
   return (
-    <div className="flex items-center gap-2 py-3 px-2 bg-white rounded-xl shadow-xl ring-2 ring-blue-500 cursor-grabbing">
-      {/* Spacer for expand button area */}
-      <div className="w-5" />
-
+    <div className="flex items-center gap-2 py-3 px-4 bg-white rounded-xl shadow-2xl ring-2 ring-blue-500 cursor-grabbing transform scale-[1.02] opacity-95">
       {/* Drag Handle */}
-      <div className="p-1 -ml-1 text-gray-500">
+      <div className="p-1 text-blue-500">
         <GripVertical className="h-4 w-4" />
       </div>
 
