@@ -182,7 +182,7 @@ const ProfilePage = () => {
 };
 
 // Sub-components
-const InfoItem = ({ label, value, verified = false, status = "none" }) => (
+const InfoItem = ({ label, value, verified = false, status = "none" }: { label: string; value: string; verified?: boolean; status?: string }) => (
   <div className="group">
     <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1.5 group-hover:text-blue-600 transition-colors">{label}</p>
     <div className="flex items-center gap-2">
@@ -194,7 +194,7 @@ const InfoItem = ({ label, value, verified = false, status = "none" }) => (
   </div>
 );
 
-const DocItem = ({ name, status }) => (
+const DocItem = ({ name, status }: { name: string; status: string }) => (
   <div className="flex items-center justify-between group cursor-pointer p-3 -m-2 rounded-2xl hover:bg-blue-50 transition-all">
     <div className="flex items-center gap-4">
       <div className={`p-2 rounded-xl transition-colors ${status === 'verified' ? 'bg-blue-50 text-blue-600' : 'bg-slate-50 text-slate-400'}`}>
