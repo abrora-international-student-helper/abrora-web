@@ -107,7 +107,7 @@ const Navbar = () => {
                             <DropdownItem icon={<GraduationCap className="h-5 w-5" />} title="College Application" desc="Research, apply, get accepted" color="blue" href="/rookie" />
                             <DropdownItem icon={<Shield className="h-5 w-5" />} title="Visa Process" desc="DS-160, SEVIS, interview" color="orange" href="/visa-setup" />
                             <DropdownItem icon={<Syringe className="h-5 w-5" />} title="Medical & Vaccines" desc="MMR, TB test, records" color="rose" href="/rookie" />
-                            <DropdownItem icon={<ShoppingBag className="h-5 w-5" />} title="Shopping & Flights" desc="What to pack, cheap flights" color="purple" href="/rookie" />
+                            <DropdownItem icon={<ShoppingBag className="h-5 w-5" />} title="Shopping & Flights" desc="What to pack, cheap flights" color="purple" href="/shopping" />
                           </div>
                         </div>
                         <div>
