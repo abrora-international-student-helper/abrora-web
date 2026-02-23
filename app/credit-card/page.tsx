@@ -1,141 +1,337 @@
 "use client";
 
-import React from "react";
+import React, { useMemo, useState } from "react";
 import Link from "next/link";
 
-const paths = [
+type BandKey = "poor" | "fair" | "good" | "verygood" | "excellent";
+
+const BANDS: {
+  key: BandKey;
+  label: string;
+  range: string;
+  tip: string;
+  start: number; // inclusive
+  end: number; // inclusive
+  // tailwind classes
+  bg: string;
+  border: string;
+  text: string;
+}[] = [
   {
-    title: "Apply for Your First Card",
-    desc: "No panic. Learn the safest starter cards, what you need, and what to avoid.",
-    href: "/credit/apply",
-    icon: "🪪",
-    highlights: ["Student vs Secured", "No-SSN options", "Best first steps"],
+    key: "poor",
+    label: "Poor",
+    range: "300–579",
+    tip: "Start with 1 card, autopay minimum, and never miss payments.",
+    start: 300,
+    end: 579,
+    bg: "bg-rose-50",
+    border: "border-rose-200",
+    text: "text-rose-800",
   },
   {
-    title: "Manage Your Card",
-    desc: "Build credit without debt. Learn statements, due dates, and utilization in simple terms.",
-    href: "/credit/manage",
-    icon: "📅",
-    highlights: ["Statement vs due date", "Utilization rule", "Autopay setup"],
+    key: "fair",
+    label: "Needs Work",
+    range: "580–669",
+    tip: "Pay on time every month and keep utilization under 30%.",
+    start: 580,
+    end: 669,
+    bg: "bg-amber-50",
+    border: "border-amber-200",
+    text: "text-amber-900",
   },
   {
-    title: "Security & Scam Shield",
-    desc: "Protect your money and identity. Learn the scams that target international students.",
-    href: "/credit/security",
-    icon: "🛡️",
-    highlights: ["Fake IRS/SSN calls", "Phishing texts", "Safe habits"],
+    key: "good",
+    label: "Good",
+    range: "670–739",
+    tip: "Good range. Stay consistent and avoid high balances.",
+    start: 670,
+    end: 739,
+    bg: "bg-sky-50",
+    border: "border-sky-200",
+    text: "text-sky-900",
+  },
+  {
+    key: "verygood",
+    label: "Very Good",
+    range: "740–799",
+    tip: "Strong range. Keep credit age growing and pay in full.",
+    start: 740,
+    end: 799,
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    text: "text-emerald-900",
+  },
+  {
+    key: "excellent",
+    label: "Excellent",
+    range: "800–850",
+    tip: "Top range. Maintain habits: on-time + low utilization.",
+    start: 800,
+    end: 850,
+    bg: "bg-emerald-50",
+    border: "border-emerald-200",
+    text: "text-emerald-900",
   },
 ];
 
+function clamp(n: number, min: number, max: number) {
+  return Math.max(min, Math.min(max, n));
+}
+
+function bandForScore(score: number) {
+  const s = clamp(score, 300, 850);
+  return (
+    BANDS.find((b) => s >= b.start && s <= b.end) ??
+    BANDS[BANDS.length - 1]
+  );
+}
+
+function pctFromScore(score: number) {
+  const s = clamp(score, 300, 850);
+  return ((s - 300) / 550) * 100;
+}
+
 export default function CreditPage() {
+  const [score, setScore] = useState(680);
+
+  const currentBand = useMemo(() => bandForScore(score), [score]);
+  const percent = useMemo(() => pctFromScore(score), [score]);
+
+  // For the hover legend (independent from slider)
+  const [hoverBand, setHoverBand] = useState<BandKey | null>(null);
+  const bandShown = useMemo(() => {
+    if (!hoverBand) return currentBand;
+    return BANDS.find((b) => b.key === hoverBand) ?? currentBand;
+  }, [hoverBand, currentBand]);
+
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* HERO */}
-      <section className="relative overflow-hidden pt-16 pb-12 text-center">
-        {/* soft accent only */}
-        <div className="pointer-events-none absolute -top-40 left-1/2 h-[360px] w-[360px] -translate-x-1/2 rounded-full bg-blue-100/30 blur-2xl" />
+      <section className="pt-16 pb-10 text-center">
+        <h1 className="text-4xl font-extrabold md:text-6xl">
+          Credit Cards — <span className="text-blue-600">Made Simple</span>
+        </h1>
+        <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
+          A simple guide for international students in the U.S.
+        </p>
+      </section>
 
-        <div className="relative mx-auto max-w-6xl px-4">
-          <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 md:text-6xl">
-            Credit Cards in the U.S. —{" "}
-            <span className="text-blue-600">explained from zero.</span>
-          </h1>
+      {/* METER */}
+      <section className="mx-auto max-w-4xl px-4 pb-10">
+        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+          <p className="text-xs font-extrabold text-gray-500">CREDIT SCORE METER</p>
+          <h2 className="mt-1 text-2xl font-extrabold">Where are you?</h2>
 
-          <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-700">
-            If you’re an international student and credit feels confusing, you’re normal.
-            This page teaches the basics and gives you the safest next steps.
-          </p>
+          {/* Color bands (hover here) */}
+          <div className="mt-6">
+            <div className="flex h-5 overflow-hidden rounded-full">
+              {/* Poor */}
+              <div
+                className="group relative flex-1 bg-rose-500/70"
+                onMouseEnter={() => setHoverBand("poor")}
+                onMouseLeave={() => setHoverBand(null)}
+              />
+              {/* Needs work */}
+              <div
+                className="group relative flex-1 bg-amber-500/70"
+                onMouseEnter={() => setHoverBand("fair")}
+                onMouseLeave={() => setHoverBand(null)}
+              />
+              {/* Good */}
+              <div
+                className="group relative flex-1 bg-sky-500/70"
+                onMouseEnter={() => setHoverBand("good")}
+                onMouseLeave={() => setHoverBand(null)}
+              />
+              {/* Very good */}
+              <div
+                className="group relative flex-1 bg-emerald-500/70"
+                onMouseEnter={() => setHoverBand("verygood")}
+                onMouseLeave={() => setHoverBand(null)}
+              />
+              {/* Excellent */}
+              <div
+                className="group relative flex-1 bg-emerald-700/70"
+                onMouseEnter={() => setHoverBand("excellent")}
+                onMouseLeave={() => setHoverBand(null)}
+              />
+            </div>
 
-          <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
-            <Link
-              href="#start"
-              className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-bold text-white shadow-sm transition hover:bg-blue-700"
-            >
-              Start the Beginner Guide
-            </Link>
-            <Link
-              href="/credit/glossary"
-              className="rounded-2xl border border-gray-300 bg-white px-6 py-3 text-sm font-bold text-gray-900 shadow-sm transition hover:bg-gray-50"
-            >
-              See the Simple Glossary
-            </Link>
+            {/* little tick labels */}
+            <div className="mt-3 flex items-center justify-between text-xs font-bold text-gray-500">
+              <span>300</span>
+              <span>580</span>
+              <span>670</span>
+              <span>740</span>
+              <span>800</span>
+              <span>850</span>
+            </div>
           </div>
 
-          <div className="mx-auto mt-10 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
-            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="text-xs font-bold text-gray-500">WHAT A CARD IS</p>
-              <p className="mt-1 text-sm text-gray-800">
-                A short-term loan you can use daily — then repay monthly.
-              </p>
+          {/* Slider + blue progress like your screenshot */}
+          <div className="mt-6">
+            <div className="h-3 w-full overflow-hidden rounded-full bg-gray-100">
+              <div
+                className="h-full rounded-full bg-blue-600 transition-all"
+                style={{ width: `${percent}%` }}
+              />
             </div>
-            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="text-xs font-bold text-gray-500">WHY IT MATTERS</p>
-              <p className="mt-1 text-sm text-gray-800">
-                It builds a trust score used for apartments, cars, and more.
-              </p>
+
+            <div className="mt-4 flex items-center justify-between">
+              <span className="text-sm font-extrabold text-gray-500">300</span>
+
+              {/* Badge + hover tooltip */}
+              <div className="group relative">
+                <span
+                  className={`inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-extrabold ${bandShown.bg} ${bandShown.border} ${bandShown.text}`}
+                >
+                  {bandShown.label}
+                </span>
+
+                <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-[280px] -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-3 text-xs text-gray-700 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
+                  <p className="font-extrabold">
+                    {bandShown.label} <span className="text-gray-400">({bandShown.range})</span>
+                  </p>
+                  <p className="mt-1">{bandShown.tip}</p>
+                </div>
+              </div>
+
+              <span className="text-sm font-extrabold text-gray-500">850</span>
             </div>
-            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
-              <p className="text-xs font-bold text-gray-500">THE GOLDEN RULE</p>
-              <p className="mt-1 text-sm text-gray-800">
-                Pay on time — always. That’s 80% of winning.
-              </p>
+
+            <div className="mt-4">
+              <input
+                type="range"
+                min={300}
+                max={850}
+                value={score}
+                onChange={(e) => setScore(Number(e.target.value))}
+                className="w-full accent-blue-600"
+              />
+            </div>
+
+            <p className="mt-3 text-sm text-gray-600">
+              Hover the colored bar to see <b>Poor / Needs Work / Good / Very Good / Excellent</b>.
+              Slide to test different scores.
+            </p>
+
+            <div className="mt-4 rounded-2xl bg-gray-50 p-4 text-sm text-gray-700">
+              Your demo score: <b>{score}</b> → <b>{currentBand.label}</b>.{" "}
+              <span className="text-gray-500">(Real scores come from credit bureaus.)</span>
             </div>
           </div>
         </div>
       </section>
 
-      {/* CHOOSE YOUR PATH */}
-      <section id="start" className="mx-auto max-w-6xl px-4 py-12">
-        <div className="flex items-end justify-between gap-6">
-          <div>
-            <h2 className="text-2xl font-bold">Choose your path</h2>
-            <p className="mt-2 text-gray-600">
-              Pick the section you need right now. You can come back anytime.
+      {/* 3 SIMPLE GUIDES */}
+      <section className="mx-auto max-w-6xl px-4 pb-16">
+        <div className="rounded-[40px] border border-gray-100 bg-gray-50 p-10 shadow-sm">
+          <h2 className="mb-8 flex items-center gap-2 text-2xl font-bold">
+            ⚡ Step-by-Step Guides
+          </h2>
+
+          <div className="grid gap-6 md:grid-cols-3">
+            <Link
+              href="/credit-card/apply/"
+              className="rounded-3xl bg-sky-50 p-8 text-center transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
+                🪪
+              </div>
+              <h3 className="text-xl font-bold">Apply</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Safest way to get your first card.
+              </p>
+            </Link>
+
+            <Link
+              href="/credit-card/manage"
+              className="rounded-3xl bg-amber-50 p-8 text-center transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
+                📅
+              </div>
+              <h3 className="text-xl font-bold">Manage</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Dates, utilization, autopay — simple.
+              </p>
+            </Link>
+
+            <Link
+              href="/credit-card/security"
+              className="rounded-3xl bg-emerald-50 p-8 text-center transition hover:-translate-y-1 hover:shadow-lg"
+            >
+              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
+                🛡️
+              </div>
+              <h3 className="text-xl font-bold">Security</h3>
+              <p className="mt-2 text-sm text-gray-600">
+                Avoid scams and protect your money.
+              </p>
+            </Link>
+          </div>
+        </div>
+      </section>
+
+      {/* BANKS + CREDIT BUREAUS + POPULAR CARD TYPES */}
+      <section className="mx-auto max-w-6xl px-4 pb-20">
+        <div className="grid gap-6 md:grid-cols-3">
+          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h3 className="text-lg font-extrabold">Popular banks</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Common choices for students (good apps + many locations).
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-gray-700">
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Chase</b></li>
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Bank of America</b></li>
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Capital One</b></li>
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Discover</b></li>
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Citi</b></li>
+            </ul>
+          </div>
+
+          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h3 className="text-lg font-extrabold">Credit bureaus</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              These companies hold your credit report in the U.S.
+            </p>
+            <ul className="mt-4 space-y-2 text-sm text-gray-700">
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Equifax</b></li>
+              <li className="rounded-2xl bg-gray-50 p-3"><b>Experian</b></li>
+              <li className="rounded-2xl bg-gray-50 p-3"><b>TransUnion</b></li>
+            </ul>
+            <p className="mt-4 text-xs text-gray-500">
+              Your score can differ across bureaus — that’s normal.
             </p>
           </div>
-          <Link
-            href="/credit/checklist"
-            className="hidden rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-bold text-gray-900 shadow-sm transition hover:border-gray-400 sm:inline-flex"
-          >
-            ✅ Printable checklist
-          </Link>
+
+          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+            <h3 className="text-lg font-extrabold">Starter card types</h3>
+            <p className="mt-2 text-sm text-gray-600">
+              Keep it safe first. Rewards later.
+            </p>
+            <div className="mt-4 space-y-3 text-sm text-gray-700">
+              <div className="rounded-2xl bg-gray-50 p-4">
+                <p className="font-extrabold">Student card</p>
+                <p className="mt-1 text-gray-600">Good first option if you qualify.</p>
+              </div>
+              <div className="rounded-2xl bg-gray-50 p-4">
+                <p className="font-extrabold">Secured card</p>
+                <p className="mt-1 text-gray-600">Deposit → limit. Best “yes” path for beginners.</p>
+              </div>
+              <div className="rounded-2xl bg-emerald-50 p-4">
+                <p className="font-extrabold text-emerald-900">Golden rule</p>
+                <p className="mt-1 text-emerald-900">
+                  Pay on time + pay statement balance in full.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {paths.map((p) => (
-            <Link
-              key={p.title}
-              href={p.href}
-              className="group relative rounded-3xl border border-gray-100 bg-white p-8 shadow-sm transition-all duration-300 hover:-translate-y-2 hover:shadow-lg hover:border-emerald-200"
-            >
-              {/* blue-green glow */}
-              <div className="pointer-events-none absolute inset-0 rounded-3xl opacity-0 transition-opacity duration-300 group-hover:opacity-100 bg-gradient-to-br from-emerald-50 via-sky-50 to-white" />
-
-              <div className="relative flex items-start justify-between gap-4">
-                <div className="text-4xl">{p.icon}</div>
-                <span className="text-xs font-bold text-gray-400 group-hover:text-gray-600">
-                  OPEN →
-                </span>
-              </div>
-
-              <h3 className="relative mt-4 text-xl font-bold">{p.title}</h3>
-              <p className="relative mt-2 text-sm text-gray-600">{p.desc}</p>
-
-              <div className="relative mt-5 space-y-2">
-                {p.highlights.map((h) => (
-                  <div key={h} className="flex items-center gap-2 text-sm text-gray-700">
-                    <span className="text-emerald-500">•</span>
-                    <span>{h}</span>
-                  </div>
-                ))}
-              </div>
-
-              <div className="relative mt-6 inline-flex items-center gap-2 rounded-2xl bg-gray-50 px-4 py-2 text-xs font-bold text-gray-700 transition group-hover:bg-emerald-50 group-hover:text-emerald-700">
-                Start here
-                <span className="transition group-hover:translate-x-0.5">→</span>
-              </div>
-            </Link>
-          ))}
+        <div className="mt-8 rounded-3xl border border-gray-100 bg-gray-50 p-6 text-sm text-gray-700">
+          <b>Quick safety tip:</b> No real bank/IRS asks for gift cards, crypto, or “urgent payments” by phone.
+          If it sounds scary and rushed — pause and verify using official numbers.
         </div>
       </section>
     </div>

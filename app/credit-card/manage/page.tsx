@@ -1,343 +1,532 @@
-
 "use client";
 
 import React, { useMemo, useState } from "react";
 import Link from "next/link";
 
-type BandKey = "poor" | "fair" | "good" | "verygood" | "excellent";
+type StepKey =
+  | "basics"
+  | "statement"
+  | "autopay"
+  | "utilization"
+  | "interest"
+  | "routine"
+  | "emergency";
 
-const BANDS: {
-  key: BandKey;
-  label: string;
-  range: string;
-  tip: string;
-  start: number; // inclusive
-  end: number; // inclusive
-  // tailwind classes
-  bg: string;
-  border: string;
-  text: string;
-}[] = [
+const STEPS: { key: StepKey; title: string; emoji: string; summary: string }[] = [
   {
-    key: "poor",
-    label: "Poor",
-    range: "300–579",
-    tip: "Start with 1 card, autopay minimum, and never miss payments.",
-    start: 300,
-    end: 579,
-    bg: "bg-rose-50",
-    border: "border-rose-200",
-    text: "text-rose-800",
+    key: "basics",
+    title: "The only 3 rules that matter",
+    emoji: "⭐",
+    summary: "Pay on time. Keep usage low. Don’t panic.",
   },
   {
-    key: "fair",
-    label: "Needs Work",
-    range: "580–669",
-    tip: "Pay on time every month and keep utilization under 30%.",
-    start: 580,
-    end: 669,
-    bg: "bg-amber-50",
-    border: "border-amber-200",
-    text: "text-amber-900",
+    key: "statement",
+    title: "Statement vs due date",
+    emoji: "📄",
+    summary: "Know what you owe and when you owe it.",
   },
   {
-    key: "good",
-    label: "Good",
-    range: "670–739",
-    tip: "Good range. Stay consistent and avoid high balances.",
-    start: 670,
-    end: 739,
-    bg: "bg-sky-50",
-    border: "border-sky-200",
-    text: "text-sky-900",
+    key: "autopay",
+    title: "Autopay setup",
+    emoji: "🤖",
+    summary: "Set it once, avoid late payments forever.",
   },
   {
-    key: "verygood",
-    label: "Very Good",
-    range: "740–799",
-    tip: "Strong range. Keep credit age growing and pay in full.",
-    start: 740,
-    end: 799,
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    text: "text-emerald-900",
+    key: "utilization",
+    title: "Utilization (the simple version)",
+    emoji: "📉",
+    summary: "Keep your balance small compared to your limit.",
   },
   {
-    key: "excellent",
-    label: "Excellent",
-    range: "800–850",
-    tip: "Top range. Maintain habits: on-time + low utilization.",
-    start: 800,
-    end: 850,
-    bg: "bg-emerald-50",
-    border: "border-emerald-200",
-    text: "text-emerald-900",
+    key: "interest",
+    title: "Avoid interest",
+    emoji: "💸",
+    summary: "Pay statement balance in full if you can.",
+  },
+  {
+    key: "routine",
+    title: "Monthly routine (5 minutes)",
+    emoji: "🗓️",
+    summary: "A tiny checklist that builds credit over time.",
+  },
+  {
+    key: "emergency",
+    title: "If something goes wrong",
+    emoji: "🧯",
+    summary: "Late payment, overlimit, lost card—what to do.",
   },
 ];
 
-function clamp(n: number, min: number, max: number) {
-  return Math.max(min, Math.min(max, n));
+function classNames(...parts: Array<string | false | undefined | null>) {
+  return parts.filter(Boolean).join(" ");
 }
 
-function bandForScore(score: number) {
-  const s = clamp(score, 300, 850);
-  return (
-    BANDS.find((b) => s >= b.start && s <= b.end) ??
-    BANDS[BANDS.length - 1]
-  );
-}
-
-function pctFromScore(score: number) {
-  const s = clamp(score, 300, 850);
-  return ((s - 300) / 550) * 100;
-}
-
-export default function CreditPage() {
-  const [score, setScore] = useState(680);
-
-  const currentBand = useMemo(() => bandForScore(score), [score]);
-  const percent = useMemo(() => pctFromScore(score), [score]);
-
-  // For the hover legend (independent from slider)
-  const [hoverBand, setHoverBand] = useState<BandKey | null>(null);
-  const bandShown = useMemo(() => {
-    if (!hoverBand) return currentBand;
-    return BANDS.find((b) => b.key === hoverBand) ?? currentBand;
-  }, [hoverBand, currentBand]);
+export default function ManageCreditCardPage() {
+  const [open, setOpen] = useState<StepKey>("basics");
+  const active = useMemo(() => STEPS.find((s) => s.key === open) ?? STEPS[0], [open]);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
       {/* HERO */}
-      <section className="pt-16 pb-10 text-center">
-        <h1 className="text-4xl font-extrabold md:text-6xl">
-          Credit Cards — <span className="text-blue-600">Made Simple</span>
-        </h1>
-        <p className="mx-auto mt-4 max-w-2xl text-lg text-gray-600">
-          A simple guide for international students in the U.S.
-        </p>
-      </section>
+      <section className="relative overflow-hidden pt-14 pb-10">
+        <div className="pointer-events-none absolute -top-44 left-1/2 h-[420px] w-[420px] -translate-x-1/2 rounded-full bg-blue-100/50 blur-2xl" />
+        <div className="pointer-events-none absolute -bottom-44 right-0 h-[380px] w-[380px] rounded-full bg-emerald-100/40 blur-2xl" />
 
-      {/* METER */}
-      <section className="mx-auto max-w-4xl px-4 pb-10">
-        <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
-          <p className="text-xs font-extrabold text-gray-500">CREDIT SCORE METER</p>
-          <h2 className="mt-1 text-2xl font-extrabold">Where are you?</h2>
-
-          {/* Color bands (hover here) */}
-          <div className="mt-6">
-            <div className="flex h-5 overflow-hidden rounded-full">
-              {/* Poor */}
-              <div
-                className="group relative flex-1 bg-rose-500/70"
-                onMouseEnter={() => setHoverBand("poor")}
-                onMouseLeave={() => setHoverBand(null)}
-              />
-              {/* Needs work */}
-              <div
-                className="group relative flex-1 bg-amber-500/70"
-                onMouseEnter={() => setHoverBand("fair")}
-                onMouseLeave={() => setHoverBand(null)}
-              />
-              {/* Good */}
-              <div
-                className="group relative flex-1 bg-sky-500/70"
-                onMouseEnter={() => setHoverBand("good")}
-                onMouseLeave={() => setHoverBand(null)}
-              />
-              {/* Very good */}
-              <div
-                className="group relative flex-1 bg-emerald-500/70"
-                onMouseEnter={() => setHoverBand("verygood")}
-                onMouseLeave={() => setHoverBand(null)}
-              />
-              {/* Excellent */}
-              <div
-                className="group relative flex-1 bg-emerald-700/70"
-                onMouseEnter={() => setHoverBand("excellent")}
-                onMouseLeave={() => setHoverBand(null)}
-              />
-            </div>
-
-            {/* little tick labels */}
-            <div className="mt-3 flex items-center justify-between text-xs font-bold text-gray-500">
-              <span>300</span>
-              <span>580</span>
-              <span>670</span>
-              <span>740</span>
-              <span>800</span>
-              <span>850</span>
-            </div>
+        <div className="relative mx-auto max-w-6xl px-4">
+          <div className="flex flex-wrap items-center gap-2 text-sm text-gray-500">
+            <Link href="/credit-card" className="hover:text-gray-900">
+              Credit Cards
+            </Link>
+            <span>→</span>
+            <span className="font-bold text-gray-700">Manage</span>
           </div>
 
-          {/* Slider + blue progress like your screenshot */}
-          <div className="mt-6">
-            <div className="h-3 w-full overflow-hidden rounded-full bg-gray-100">
-              <div
-                className="h-full rounded-full bg-blue-600 transition-all"
-                style={{ width: `${percent}%` }}
-              />
+          <h1 className="mt-4 text-4xl font-extrabold tracking-tight md:text-6xl">
+            Manage your card — <span className="text-blue-600">without debt.</span>
+          </h1>
+
+          <p className="mt-4 max-w-2xl text-lg text-gray-600">
+            Credit is simple when you understand the statement, due date, and autopay.
+            Follow these steps and you’ll build credit safely.
+          </p>
+
+          <div className="mt-7 flex flex-col items-start gap-3 sm:flex-row sm:items-center">
+            <a
+              href="#steps"
+              className="rounded-2xl bg-blue-600 px-6 py-3 text-sm font-extrabold text-white shadow-sm transition hover:bg-blue-700"
+            >
+              Start the management guide
+            </a>
+            <Link
+              href="/credit-card/apply/"
+              className="rounded-2xl border border-gray-300 bg-white px-6 py-3 text-sm font-extrabold text-gray-900 shadow-sm transition hover:bg-gray-50"
+            >
+              Still applying? → Apply guide
+            </Link>
+          </div>
+
+          <div className="mt-10 grid gap-3 sm:grid-cols-3">
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <p className="text-xs font-extrabold text-gray-500">#1</p>
+              <p className="mt-1 text-sm text-gray-800">
+                Pay on time. Every time. <b>No exceptions.</b>
+              </p>
             </div>
-
-            <div className="mt-4 flex items-center justify-between">
-              <span className="text-sm font-extrabold text-gray-500">300</span>
-
-              {/* Badge + hover tooltip */}
-              <div className="group relative">
-                <span
-                  className={`inline-flex items-center rounded-full border px-4 py-1.5 text-sm font-extrabold ${bandShown.bg} ${bandShown.border} ${bandShown.text}`}
-                >
-                  {bandShown.label}
-                </span>
-
-                <div className="pointer-events-none absolute left-1/2 top-full z-10 mt-2 w-[280px] -translate-x-1/2 rounded-2xl border border-gray-200 bg-white p-3 text-xs text-gray-700 opacity-0 shadow-lg transition-opacity group-hover:opacity-100">
-                  <p className="font-extrabold">
-                    {bandShown.label} <span className="text-gray-400">({bandShown.range})</span>
-                  </p>
-                  <p className="mt-1">{bandShown.tip}</p>
-                </div>
-              </div>
-
-              <span className="text-sm font-extrabold text-gray-500">850</span>
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <p className="text-xs font-extrabold text-gray-500">#2</p>
+              <p className="mt-1 text-sm text-gray-800">
+                Keep utilization under <b>30%</b> (under 10% is great).
+              </p>
             </div>
-
-            <div className="mt-4">
-              <input
-                type="range"
-                min={300}
-                max={850}
-                value={score}
-                onChange={(e) => setScore(Number(e.target.value))}
-                className="w-full accent-blue-600"
-              />
-            </div>
-
-            <p className="mt-3 text-sm text-gray-600">
-              Hover the colored bar to see <b>Poor / Needs Work / Good / Very Good / Excellent</b>.
-              Slide to test different scores.
-            </p>
-
-            <div className="mt-4 rounded-2xl bg-gray-50 p-4 text-sm text-gray-700">
-              Your demo score: <b>{score}</b> → <b>{currentBand.label}</b>.{" "}
-              <span className="text-gray-500">(Real scores come from credit bureaus.)</span>
+            <div className="rounded-2xl border border-gray-100 bg-white p-4 shadow-sm">
+              <p className="text-xs font-extrabold text-gray-500">#3</p>
+              <p className="mt-1 text-sm text-gray-800">
+                Pay the <b>statement balance</b> to avoid interest.
+              </p>
             </div>
           </div>
         </div>
       </section>
 
-      {/* 3 SIMPLE GUIDES */}
-      <section className="mx-auto max-w-6xl px-4 pb-16">
-        <div className="rounded-[40px] border border-gray-100 bg-gray-50 p-10 shadow-sm">
-          <h2 className="mb-8 flex items-center gap-2 text-2xl font-bold">
-            ⚡ Step-by-Step Guides
-          </h2>
-
-          <div className="grid gap-6 md:grid-cols-3">
-            <Link
-              href="/credit-card/apply"
-              className="rounded-3xl bg-sky-50 p-8 text-center transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
-                🪪
-              </div>
-              <h3 className="text-xl font-bold">Apply</h3>
+      {/* MAIN */}
+      <section id="steps" className="mx-auto max-w-6xl px-4 pb-20">
+        <div className="grid gap-6 lg:grid-cols-12">
+          {/* LEFT NAV */}
+          <aside className="lg:col-span-5">
+            <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+              <p className="text-xs font-extrabold text-gray-500">MANAGEMENT STEPS</p>
+              <h2 className="mt-1 text-2xl font-extrabold">Tap and learn</h2>
               <p className="mt-2 text-sm text-gray-600">
-                Safest way to get your first card.
+                One topic at a time. Simple explanations.
               </p>
-            </Link>
 
-            <Link
-              href="/credit-card/manage"
-              className="rounded-3xl bg-amber-50 p-8 text-center transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
-                📅
+              <div className="mt-5 space-y-3">
+                {STEPS.map((s, idx) => {
+                  const isActive = s.key === open;
+                  return (
+                    <button
+                      key={s.key}
+                      type="button"
+                      onClick={() => setOpen(s.key)}
+                      className={classNames(
+                        "w-full text-left rounded-3xl border p-4 transition",
+                        "focus:outline-none focus:ring-2 focus:ring-blue-200",
+                        isActive
+                          ? "border-blue-200 bg-blue-50"
+                          : "border-gray-100 bg-white hover:bg-gray-50"
+                      )}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={classNames(
+                            "mt-0.5 flex h-10 w-10 items-center justify-center rounded-2xl shadow-sm",
+                            isActive ? "bg-white" : "bg-gray-50"
+                          )}
+                        >
+                          <span className="text-xl">{s.emoji}</span>
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-extrabold text-gray-900">
+                              {idx + 1}. {s.title}
+                            </p>
+                            <span
+                              className={classNames(
+                                "text-xs font-extrabold",
+                                isActive ? "text-blue-700" : "text-gray-400"
+                              )}
+                            >
+                              {isActive ? "OPEN" : "VIEW"}
+                            </span>
+                          </div>
+                          <p className="mt-1 text-sm text-gray-600">{s.summary}</p>
+                        </div>
+                      </div>
+                    </button>
+                  );
+                })}
               </div>
-              <h3 className="text-xl font-bold">Manage</h3>
-              <p className="mt-2 text-sm text-gray-600">
-                Dates, utilization, autopay — simple.
-              </p>
-            </Link>
 
-            <Link
-              href="/credit-card/security"
-              className="rounded-3xl bg-emerald-50 p-8 text-center transition hover:-translate-y-1 hover:shadow-lg"
-            >
-              <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-white shadow">
-                🛡️
-              </div>
-              <h3 className="text-xl font-bold">Security</h3>
-              <p className="mt-2 text-sm text-gray-600">
-                Avoid scams and protect your money.
-              </p>
-            </Link>
-          </div>
-        </div>
-      </section>
-
-      {/* BANKS + CREDIT BUREAUS + POPULAR CARD TYPES */}
-      <section className="mx-auto max-w-6xl px-4 pb-20">
-        <div className="grid gap-6 md:grid-cols-3">
-          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-extrabold">Popular banks</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Common choices for students (good apps + many locations).
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-gray-700">
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Chase</b></li>
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Bank of America</b></li>
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Capital One</b></li>
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Discover</b></li>
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Citi</b></li>
-            </ul>
-          </div>
-
-          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-extrabold">Credit bureaus</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              These companies hold your credit report in the U.S.
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-gray-700">
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Equifax</b></li>
-              <li className="rounded-2xl bg-gray-50 p-3"><b>Experian</b></li>
-              <li className="rounded-2xl bg-gray-50 p-3"><b>TransUnion</b></li>
-            </ul>
-            <p className="mt-4 text-xs text-gray-500">
-              Your score can differ across bureaus — that’s normal.
-            </p>
-          </div>
-
-          <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
-            <h3 className="text-lg font-extrabold">Starter card types</h3>
-            <p className="mt-2 text-sm text-gray-600">
-              Keep it safe first. Rewards later.
-            </p>
-            <div className="mt-4 space-y-3 text-sm text-gray-700">
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="font-extrabold">Student card</p>
-                <p className="mt-1 text-gray-600">Good first option if you qualify.</p>
-              </div>
-              <div className="rounded-2xl bg-gray-50 p-4">
-                <p className="font-extrabold">Secured card</p>
-                <p className="mt-1 text-gray-600">Deposit → limit. Best “yes” path for beginners.</p>
-              </div>
-              <div className="rounded-2xl bg-emerald-50 p-4">
-                <p className="font-extrabold text-emerald-900">Golden rule</p>
-                <p className="mt-1 text-emerald-900">
-                  Pay on time + pay statement balance in full.
+              <div className="mt-6 rounded-2xl bg-gray-50 p-4 text-sm text-gray-700">
+                <p className="font-extrabold">The most common confusion:</p>
+                <p className="mt-1">
+                  <b>“Current balance”</b> is what you owe right now.
+                  <br />
+                  <b>“Statement balance”</b> is what you must pay by the due date to avoid interest.
                 </p>
               </div>
             </div>
-          </div>
-        </div>
 
-        {/* Optional: quick note */}
-        <div className="mt-8 rounded-3xl border border-gray-100 bg-gray-50 p-6 text-sm text-gray-700">
-          <b>Quick safety tip:</b> No real bank/IRS asks for gift cards, crypto, or “urgent payments” by phone.
-          If it sounds scary and rushed — pause and verify using official numbers.
+            {/* Quick cheat sheet */}
+            <div className="mt-6 rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+              <p className="text-xs font-extrabold text-gray-500">CHEAT SHEET</p>
+              <h3 className="mt-1 text-lg font-extrabold">If you remember only this</h3>
+              <div className="mt-4 space-y-2 text-sm text-gray-700">
+                <div className="rounded-2xl bg-gray-50 p-3">
+                  ✅ Pay <b>statement balance</b> in full (best)
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-3">
+                  ✅ Autopay at least the <b>minimum</b>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-3">
+                  ✅ Keep spending small relative to your limit
+                </div>
+              </div>
+            </div>
+          </aside>
+
+          {/* RIGHT CONTENT */}
+          <main className="lg:col-span-7">
+            <div className="rounded-3xl border border-gray-100 bg-white p-6 shadow-sm md:p-8">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-xs font-extrabold text-gray-500">CURRENT STEP</p>
+                  <h3 className="mt-1 text-2xl font-extrabold">
+                    {active.emoji} {active.title}
+                  </h3>
+                  <p className="mt-2 text-sm text-gray-600">{active.summary}</p>
+                </div>
+                <Link
+                  href="/credit-card"
+                  className="hidden rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-extrabold text-gray-900 shadow-sm transition hover:bg-gray-50 md:inline-flex"
+                >
+                  ← Back
+                </Link>
+              </div>
+
+              <div className="mt-6 space-y-6 text-gray-800">
+                {open === "basics" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">The 3 rules</p>
+                      <ol className="mt-3 space-y-2 text-sm text-gray-700">
+                        <li className="rounded-2xl bg-white p-3 border border-gray-100">
+                          <b>1) Pay on time</b> (autopay helps).
+                        </li>
+                        <li className="rounded-2xl bg-white p-3 border border-gray-100">
+                          <b>2) Keep utilization low</b> (don’t max it out).
+                        </li>
+                        <li className="rounded-2xl bg-white p-3 border border-gray-100">
+                          <b>3) Pay statement balance</b> to avoid interest.
+                        </li>
+                      </ol>
+                    </div>
+
+                    <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+                      <p className="font-extrabold text-emerald-900">If you want “easy mode”</p>
+                      <p className="mt-2 text-sm text-emerald-900">
+                        Use the card for 1–2 small purchases per month, then autopay the full statement.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {open === "statement" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">Statement vs due date</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Each month, the bank “prints” a statement. That statement includes a balance.
+                        You have until the due date to pay it.
+                      </p>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-2">
+                      <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                        <p className="font-extrabold">📄 Statement date</p>
+                        <p className="mt-2 text-sm text-gray-600">
+                          The day your monthly bill is created.
+                        </p>
+                      </div>
+                      <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                        <p className="font-extrabold">⏰ Due date</p>
+                        <p className="mt-2 text-sm text-gray-600">
+                          The last day to pay without being late.
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-3xl border border-blue-200 bg-blue-50 p-5">
+                      <p className="font-extrabold text-blue-900">Example</p>
+                      <p className="mt-2 text-sm text-blue-900">
+                        Statement closes on the 5th. Due date is the 30th.
+                        Pay the statement balance by the 30th.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {open === "autopay" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">Autopay setup (recommended)</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Autopay prevents late payments, which are the biggest credit score damage.
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                      <p className="font-extrabold">Choose your autopay option</p>
+                      <ul className="mt-3 space-y-2 text-sm text-gray-700">
+                        <li className="rounded-2xl bg-gray-50 p-3">
+                          ✅ <b>Full statement balance</b> (best if you can afford it)
+                        </li>
+                        <li className="rounded-2xl bg-gray-50 p-3">
+                          ✅ <b>Minimum payment</b> (still protects your score)
+                        </li>
+                      </ul>
+                      <p className="mt-3 text-xs text-gray-500">
+                        Tip: If you choose minimum payment, make an extra manual payment to avoid interest.
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5">
+                      <p className="font-extrabold text-amber-900">Always keep money in the bank account</p>
+                      <p className="mt-2 text-sm text-amber-900">
+                        If autopay fails because your account is empty, you can still get late fees.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {open === "utilization" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">Utilization (simple)</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Utilization = how much of your limit you’re using.
+                        Lower is better (especially when the statement closes).
+                      </p>
+                    </div>
+
+                    <div className="grid gap-4 md:grid-cols-3">
+                      <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold text-gray-500">LIMIT</p>
+                        <p className="mt-1 text-lg font-extrabold">$300</p>
+                      </div>
+                      <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold text-gray-500">GOOD BALANCE</p>
+                        <p className="mt-1 text-lg font-extrabold">$0–$30</p>
+                        <p className="mt-1 text-xs text-gray-500">(0–10%)</p>
+                      </div>
+                      <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold text-gray-500">OK BALANCE</p>
+                        <p className="mt-1 text-lg font-extrabold">$0–$90</p>
+                        <p className="mt-1 text-xs text-gray-500">(0–30%)</p>
+                      </div>
+                    </div>
+
+                    <div className="rounded-3xl border border-blue-200 bg-blue-50 p-5">
+                      <p className="font-extrabold text-blue-900">Easy trick</p>
+                      <p className="mt-2 text-sm text-blue-900">
+                        If your balance is high mid-month, make a small payment before your statement closes.
+                        This can keep your reported utilization lower.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {open === "interest" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">Avoid interest</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Interest usually happens when you don’t pay the statement balance in full.
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-gray-100 bg-white p-5 shadow-sm">
+                      <p className="font-extrabold">Best practice</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Pay the <b>statement balance</b> by the due date. That’s the cleanest way to use a credit card.
+                      </p>
+                    </div>
+
+                    <div className="rounded-3xl border border-rose-200 bg-rose-50 p-5">
+                      <p className="font-extrabold text-rose-800">Avoid this mistake</p>
+                      <p className="mt-2 text-sm text-rose-900">
+                        Paying only the minimum keeps you “not late,” but you may pay interest on the remaining balance.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {open === "routine" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">Monthly routine (5 minutes)</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Do these small checks once per month. This builds credit without stress.
+                      </p>
+                    </div>
+
+                    <ol className="space-y-2 text-sm text-gray-700">
+                      <li className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>1)</b> Open your app. Confirm autopay is ON.
+                      </li>
+                      <li className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>2)</b> Check statement close date + due date.
+                      </li>
+                      <li className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>3)</b> Keep balance under 30% of the limit (lower is better).
+                      </li>
+                      <li className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>4)</b> Pay statement balance in full (when possible).
+                      </li>
+                      <li className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>5)</b> Freeze card if lost; lock it in the app if unsure.
+                      </li>
+                    </ol>
+
+                    <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-5">
+                      <p className="font-extrabold text-emerald-900">Consistency wins</p>
+                      <p className="mt-2 text-sm text-emerald-900">
+                        You don’t need big spending. You need clean, on-time history.
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {open === "emergency" && (
+                  <div className="space-y-5">
+                    <div className="rounded-3xl bg-gray-50 p-5">
+                      <p className="text-sm font-extrabold">If something goes wrong</p>
+                      <p className="mt-2 text-sm text-gray-700">
+                        Here’s the simple “what to do” list.
+                      </p>
+                    </div>
+
+                    <div className="space-y-3 text-sm text-gray-700">
+                      <div className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>Late payment risk:</b> pay immediately. Turn on autopay. Call the bank politely
+                        and ask if they can waive a first late fee (sometimes they do).
+                      </div>
+                      <div className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>Card lost:</b> lock the card in the app. Then report it lost and request replacement.
+                      </div>
+                      <div className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>Fraud charge:</b> freeze/lock card, dispute the charge in the app, and change passwords.
+                      </div>
+                      <div className="rounded-2xl border border-gray-100 bg-white p-4">
+                        <b>Balance too high:</b> make a payment now. Then reduce spending until it’s back under control.
+                      </div>
+                    </div>
+
+                    <div className="rounded-3xl border border-blue-200 bg-blue-50 p-5">
+                      <p className="font-extrabold text-blue-900">Important</p>
+                      <p className="mt-2 text-sm text-blue-900">
+                        Never share one-time passcodes (OTP) or passwords with anyone claiming to be “support.”
+                      </p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* FOOTER NAV */}
+              <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-wrap gap-2">
+                  <Link
+                    href="/credit-card"
+                    className="rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-extrabold text-gray-900 shadow-sm transition hover:bg-gray-50"
+                  >
+                    ← Credit Cards Home
+                  </Link>
+                  <Link
+                    href="/credit-card/security"
+                    className="rounded-2xl border border-gray-300 bg-white px-4 py-2 text-sm font-extrabold text-gray-900 shadow-sm transition hover:bg-gray-50"
+                  >
+                    Scam Shield
+                  </Link>
+                </div>
+
+                <a
+                  href="#steps"
+                  className="rounded-2xl bg-gray-900 px-5 py-2.5 text-sm font-extrabold text-white shadow-sm transition hover:bg-gray-800"
+                >
+                  Back to steps ↑
+                </a>
+              </div>
+            </div>
+
+            {/* FAQ */}
+            <div className="mt-6 rounded-3xl border border-gray-100 bg-white p-6 shadow-sm">
+              <h3 className="text-lg font-extrabold">Quick FAQ</h3>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-sm font-extrabold">Should I pay weekly?</p>
+                  <p className="mt-1 text-sm text-gray-700">
+                    You can. It helps keep balances low. But the key is: pay on time by the due date.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-sm font-extrabold">Is carrying a balance good?</p>
+                  <p className="mt-1 text-sm text-gray-700">
+                    No. Paying interest doesn’t “build credit faster.” Paying on time does.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-sm font-extrabold">What if I can’t pay in full?</p>
+                  <p className="mt-1 text-sm text-gray-700">
+                    Pay at least the minimum (to avoid being late), then pay extra as soon as you can.
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-gray-50 p-4">
+                  <p className="text-sm font-extrabold">When does utilization matter?</p>
+                  <p className="mt-1 text-sm text-gray-700">
+                    Most of the time, it matters most around statement closing.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Safety note */}
+            <div className="mt-6 rounded-3xl border border-gray-100 bg-gray-50 p-6 text-sm text-gray-700">
+              <b>Safety reminder:</b> If someone calls and asks for your card number or one-time code,
+              hang up. Use the official number from the bank app or the back of the card.
+            </div>
+          </main>
         </div>
       </section>
     </div>
   );
 }
-
-
